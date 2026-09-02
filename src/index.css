@@ -1,0 +1,170 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   ADAMJEE LIFE — Design System CSS Variables & Global Reset
+   ============================================================ */
+
+:root {
+  /* Brand Colors */
+  --color-primary-navy: #0f4c7a;
+  --color-state-blue: #1b75bb;
+  --color-dark-surface-1: #0b2b3d;
+  --color-dark-surface-2: #0f3a52;
+  --color-gold-accent: #cd924e;
+  --color-commit-green: #00a651;
+  --color-page-canvas: #f4f8fb;
+  --color-card-surface: #ffffff;
+  --color-error: #b42318;
+  --color-error-bg: #fef2f0;
+
+  /* Typography */
+  --font-family: 'Plus Jakarta Sans', sans-serif;
+  --font-weight-default: 500;
+
+  /* Control Heights */
+  --height-chip: 32px;
+  --height-input: 42px;
+  --height-button: 44px;
+  --height-cta: 48px;
+
+  /* Border */
+  --border-input: 1px solid #c5cad0;
+  --radius-input: 8px;
+  --radius-button: 9px;
+
+  /* Shadows */
+  --shadow-focus: 0 0 0 3px rgba(4, 61, 91, 0.15);
+  --shadow-card-hover: 0 4px 16px rgba(15, 24, 31, 0.06);
+  --shadow-card: 0 1px 4px rgba(15, 24, 31, 0.07);
+  --shadow-modal: 0 20px 60px rgba(15, 24, 31, 0.18);
+
+  /* Sidebar */
+  --sidebar-width: 240px;
+  --topbar-height: 60px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-default);
+  background-color: var(--color-page-canvas);
+  color: #1a2533;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+}
+
+/* ---- Scrollbar ---- */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c5cad0; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #a0aab4; }
+
+/* ---- Input base ---- */
+input, select, textarea {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* ---- Animations ---- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes tickIn {
+  0%   { transform: scale(0) rotate(-20deg); opacity: 0; }
+  60%  { transform: scale(1.2) rotate(5deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes progressFill {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+
+@keyframes scanLine {
+  0%   { top: 8px; opacity: 1; }
+  100% { top: calc(100% - 8px); opacity: 0.4; }
+}
+
+@keyframes boxReveal {
+  0%   { opacity: 0; transform: scale(0.85); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes successBounce {
+  0%   { transform: scale(0); }
+  50%  { transform: scale(1.15); }
+  70%  { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slaFlash {
+  0%, 100% { color: #b42318; }
+  50%       { color: #ff6b6b; }
+}
+
+/* ---- Utility classes ---- */
+.animate-fade-in    { animation: fadeIn 0.3s ease forwards; }
+.animate-scale-in   { animation: scaleIn 0.25s ease forwards; }
+.animate-slide-right{ animation: slideInRight 0.3s ease forwards; }
+.animate-slide-left { animation: slideInLeft 0.3s ease forwards; }
+.animate-spin-slow  { animation: spin 1.2s linear infinite; }
+.animate-pulse-slow { animation: pulse 1.5s ease infinite; }
+.animate-tick       { animation: tickIn 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+.animate-success    { animation: successBounce 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+
+.shimmer-bg {
+  background: linear-gradient(90deg, #e8edf2 25%, #f4f8fb 50%, #e8edf2 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
