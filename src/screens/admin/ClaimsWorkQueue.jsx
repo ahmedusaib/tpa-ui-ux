@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { T } from '../../tokens';
 import Badge from '../../components/UI/Badge';
-import Button from '../../components/UI/Button';
 
 const WORK_QUEUE = [
   { id: 'CLM-2026-48821', type: 'Hospitalization',  subscriber: 'Jawad Saleem',     amount: 'PKR 45,000',  risk: 'Low Risk',    slaHours: 2,  priority: 1, status: 'In Review',      assignee: 'Ahmed Malik' },
@@ -20,25 +19,41 @@ function SLATimer({ hours }) {
 
   return (
     <span style={{
-      fontFamily: 'monospace', fontWeight: 700, fontSize: '13px',
+      fontFamily: 'monospace', fontWeight: 700, fontSize: '12px',
       color,
       animation: isBreach ? 'slaFlash 1s ease infinite' : 'none',
+      background: `${color}15`,
+      padding: '4px 8px',
+      borderRadius: '4px',
     }}>
-      {isBreach ? '🔴 BREACH' : isCritical ? `⚠️ ${hours}h left` : `✅ ${hours}h left`}
+      {isBreach ? 'BREACH' : `${hours}h left`}
     </span>
+  );
+}
+
+function Avatar({ name }) {
+  const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2);
+  const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const colors = ['#f87171', '#60a5fa', '#34d399', '#a78bfa', '#fb923c'];
+  const bgColor = colors[hash % colors.length];
+
+  return (
+    <div style={{
+      width: '32px', height: '32px', borderRadius: '50%',
+      background: bgColor, color: '#fff',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontSize: '12px', fontWeight: 700,
+      boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.1)'
+    }}>
+      {initials}
+    </div>
   );
 }
 
 export default function ClaimsWorkQueue({ onNavigate }) {
   const [selected, setSelected] = useState(null);
-  const [sortBy, setSortBy] = useState('priority');
-
-  const sorted = [...WORK_QUEUE].sort((a, b) => {
-    if (sortBy === 'priority') return a.priority - b.priority;
-    if (sortBy === 'sla') return a.slaHours - b.slaHours;
-    if (sortBy === 'amount') return parseInt(b.amount.replace(/\D/g, '')) - parseInt(a.amount.replace(/\D/g, ''));
-    return 0;
-  });
+  const [activeTab, setActiveTab] = useState('All');
+  const [search, setSearch] = useState('');
 
   const counts = {
     total: WORK_QUEUE.length,
@@ -47,123 +62,184 @@ export default function ClaimsWorkQueue({ onNavigate }) {
     unassigned: WORK_QUEUE.filter(c => c.assignee === 'Unassigned').length,
   };
 
+  const tabs = ['All', 'Unassigned', 'Action Required', 'In Review'];
+
+  const filtered = WORK_QUEUE.filter(c => {
+    if (activeTab === 'Unassigned' && c.assignee !== 'Unassigned') return false;
+    if (activeTab === 'Action Required' && c.status !== 'Action Required') return false;
+    if (activeTab === 'In Review' && c.status !== 'In Review') return false;
+    
+    if (search) {
+      const q = search.toLowerCase();
+      return c.id.toLowerCase().includes(q) || c.subscriber.toLowerCase().includes(q);
+    }
+    return true;
+  });
+
   return (
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '22px' }}>
-        <div>
-          <h1 style={{ fontSize: '22px', fontWeight: 800, color: T.primaryNavy, marginBottom: '4px' }}>
-            Claims Work Queue
-          </h1>
-          <p style={{ fontSize: '13px', color: T.textMuted }}>
-            Prioritized queue sorted by SLA urgency and risk score. {counts.breach} SLA breach{counts.breach !== 1 ? 'es' : ''} active.
-          </p>
-        </div>
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <select
-            value={sortBy}
-            onChange={e => setSortBy(e.target.value)}
-            style={{
-              height: '36px', padding: '0 12px', borderRadius: '8px',
-              border: `1px solid ${T.borderDefault}`,
-              fontFamily: 'var(--font-family)', fontSize: '13px', fontWeight: 500,
-              background: T.cardSurface, cursor: 'pointer', outline: 'none',
-            }}
-          >
-            <option value="priority">Sort: Priority</option>
-            <option value="sla">Sort: SLA Remaining</option>
-            <option value="amount">Sort: Claim Amount</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Summary KPI Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '20px' }}>
+      
+      {/* KPI Cards Row */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '32px' }}>
         {[
-          { label: 'Total in Queue', value: counts.total, icon: '📋', color: T.primaryNavy, bg: '#eff6ff' },
-          { label: 'SLA Breached', value: counts.breach, icon: '🔴', color: T.error, bg: T.errorBg },
-          { label: 'Critical (≤3h)', value: counts.critical, icon: '⚠️', color: T.goldAccent, bg: '#fff7ed' },
-          { label: 'Unassigned', value: counts.unassigned, icon: '👤', color: '#7c3aed', bg: '#faf5ff' },
+          { label: 'Total in Queue', value: counts.total, trendText: '+8.4%', trendIcon: '↑', trendColor: T.commitGreen, vs: 'vs yesterday' },
+          { label: 'SLA Breached', value: counts.breach, trendText: '-2%', trendIcon: '↓', trendColor: T.commitGreen, vs: 'needs action' },
+          { label: 'Critical (≤3h)', value: counts.critical, trendText: '+11%', trendIcon: '↑', trendColor: T.error, vs: 'vs yesterday' },
+          { label: 'Unassigned', value: counts.unassigned, trendText: '-5%', trendIcon: '↓', trendColor: T.commitGreen, vs: 'vs yesterday' },
         ].map(kpi => (
           <div key={kpi.label} style={{
             background: T.cardSurface, border: `1px solid ${T.borderLight}`,
-            borderRadius: '10px', padding: '14px 16px',
-            borderLeft: `4px solid ${kpi.color}`,
-            boxShadow: 'var(--shadow-card)',
+            borderRadius: '16px', padding: '20px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
+            display: 'flex', flexDirection: 'column', gap: '8px'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
-              <span style={{ fontSize: '16px' }}>{kpi.icon}</span>
-              <span style={{ fontSize: '11px', color: T.textMuted, fontWeight: 500 }}>{kpi.label}</span>
+            <div style={{ fontSize: '32px', fontWeight: 800, color: T.textPrimary, lineHeight: 1 }}>{kpi.value}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+              <span style={{
+                display: 'inline-flex', alignItems: 'center', gap: '2px',
+                fontSize: '11px', fontWeight: 700, color: kpi.trendColor,
+                background: `${kpi.trendColor}15`, padding: '4px 6px', borderRadius: '6px'
+              }}>
+                <span style={{ fontSize: '12px' }}>{kpi.trendIcon}</span> {kpi.trendText}
+              </span>
+              <span style={{ fontSize: '12px', color: T.textMuted }}>{kpi.vs}</span>
             </div>
-            <div style={{ fontSize: '26px', fontWeight: 800, color: kpi.color }}>{kpi.value}</div>
+            <div style={{ fontSize: '13px', color: T.textSecondary, fontWeight: 500, marginTop: '2px' }}>{kpi.label}</div>
           </div>
         ))}
       </div>
 
-      {/* Data Table */}
+      {/* Table Section */}
       <div style={{
         background: T.cardSurface, border: `1px solid ${T.borderLight}`,
-        borderRadius: '12px', overflow: 'hidden',
-        boxShadow: 'var(--shadow-card)',
+        borderRadius: '16px', overflow: 'hidden',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
       }}>
+        {/* Table Controls */}
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '20px 24px', borderBottom: `1px solid ${T.borderLight}`
+        }}>
+          <h2 style={{ fontSize: '18px', fontWeight: 700, color: T.textPrimary, margin: 0 }}>All Claims</h2>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            {/* Search Bar */}
+            <div style={{ position: 'relative' }}>
+              <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: T.textMuted, fontSize: '14px' }}>🔍</span>
+              <input
+                type="text"
+                placeholder="Search claims, subscribers..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                style={{
+                  height: '36px', width: '240px', padding: '0 16px 0 36px',
+                  borderRadius: '8px', border: `1px solid ${T.borderLight}`,
+                  background: T.pageCanvas, fontSize: '13px', outline: 'none'
+                }}
+              />
+            </div>
+
+            {/* Filter Tabs */}
+            <div style={{ display: 'flex', background: T.pageCanvas, padding: '4px', borderRadius: '10px' }}>
+              {tabs.map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  style={{
+                    padding: '6px 14px', borderRadius: '6px',
+                    fontSize: '13px', fontWeight: 600,
+                    border: 'none', cursor: 'pointer',
+                    background: activeTab === tab ? '#fff' : 'transparent',
+                    color: activeTab === tab ? T.primaryNavy : T.textSecondary,
+                    boxShadow: activeTab === tab ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
         {/* Table Header */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '1.2fr 1fr 1.2fr 0.8fr 0.8fr 1fr 0.8fr 1fr',
-          padding: '0 16px', height: '42px',
-          background: T.pageCanvas,
+          gridTemplateColumns: '1fr 1.5fr 1fr 1fr 1fr 1fr 0.5fr',
+          padding: '0 24px', height: '48px',
+          background: T.cardSurface,
           borderBottom: `1px solid ${T.borderLight}`,
           alignItems: 'center',
-          gap: '12px',
+          gap: '16px',
         }}>
-          {['Claim ID', 'Type', 'Subscriber', 'Amount', 'Risk', 'SLA Status', 'Assignee', 'Action'].map(h => (
+          {['Claim ID', 'Subscriber', 'Amount', 'Status', 'SLA Status', 'Assignee', 'Action'].map(h => (
             <span key={h} style={{
-              fontSize: '11px', fontWeight: 700, color: T.textMuted,
-              textTransform: 'uppercase', letterSpacing: '0.05em',
+              fontSize: '12px', fontWeight: 600, color: T.textMuted,
             }}>{h}</span>
           ))}
         </div>
 
         {/* Rows */}
-        {sorted.map((claim, i) => (
+        {filtered.map((claim, i) => (
           <div
             key={claim.id}
             style={{
               display: 'grid',
-              gridTemplateColumns: '1.2fr 1fr 1.2fr 0.8fr 0.8fr 1fr 0.8fr 1fr',
-              padding: '0 16px', height: '52px',
-              alignItems: 'center', gap: '12px',
-              borderBottom: i < sorted.length - 1 ? `1px solid ${T.borderLight}` : 'none',
-              background: selected === claim.id ? '#eff6ff' : 'transparent',
+              gridTemplateColumns: '1fr 1.5fr 1fr 1fr 1fr 1fr 0.5fr',
+              padding: '0 24px', height: '64px',
+              alignItems: 'center', gap: '16px',
+              borderBottom: i < filtered.length - 1 ? `1px solid ${T.borderLight}` : 'none',
+              background: selected === claim.id ? '#f8fafc' : 'transparent',
               cursor: 'pointer',
               transition: 'background 0.15s',
               animation: `fadeIn 0.3s ease ${i * 0.04}s both`,
             }}
-            onMouseEnter={e => { if (selected !== claim.id) e.currentTarget.style.background = T.pageCanvas; }}
+            onMouseEnter={e => { if (selected !== claim.id) e.currentTarget.style.background = '#f8fafc'; }}
             onMouseLeave={e => { if (selected !== claim.id) e.currentTarget.style.background = 'transparent'; }}
-            onClick={() => setSelected(claim.id)}
+            onClick={() => { setSelected(claim.id); onNavigate('assessment'); }}
           >
-            <span style={{ fontWeight: 700, fontSize: '13px', color: T.primaryNavy }}>{claim.id}</span>
-            <span style={{ fontSize: '12px', color: T.textSecondary }}>{claim.type}</span>
-            <span style={{ fontSize: '13px', fontWeight: 600, color: T.textPrimary }}>{claim.subscriber}</span>
-            <span style={{ fontSize: '13px', fontWeight: 700, color: T.primaryNavy }}>{claim.amount}</span>
-            <Badge status={claim.risk} size="sm" />
-            <SLATimer hours={claim.slaHours} />
+            <div>
+              <div style={{ fontWeight: 600, fontSize: '13px', color: T.textPrimary }}>{claim.id}</div>
+              <div style={{ fontSize: '12px', color: T.textMuted }}>{claim.type}</div>
+            </div>
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <Avatar name={claim.subscriber} />
+              <div>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: T.textPrimary }}>{claim.subscriber}</div>
+                <div style={{ fontSize: '12px', color: T.textMuted }}>{claim.subscriber.toLowerCase().replace(' ', '.')}@example.com</div>
+              </div>
+            </div>
+
+            <span style={{ fontSize: '13px', fontWeight: 600, color: T.textPrimary }}>{claim.amount}</span>
+            
+            <div>
+              <Badge status={claim.status} size="sm" />
+            </div>
+
+            <div>
+              <SLATimer hours={claim.slaHours} />
+            </div>
+
             <span style={{
-              fontSize: '12px', fontWeight: 500,
-              color: claim.assignee === 'Unassigned' ? T.error : T.textSecondary,
+              fontSize: '13px', fontWeight: 500,
+              color: claim.assignee === 'Unassigned' ? T.textMuted : T.textPrimary,
+              fontStyle: claim.assignee === 'Unassigned' ? 'italic' : 'normal'
             }}>
               {claim.assignee}
             </span>
-            <Button
-              variant="stateBlue"
-              size="sm"
-              onClick={(e) => { e.stopPropagation(); onNavigate('assessment'); }}
-            >
-              Open →
-            </Button>
+            
+            <div style={{ display: 'flex', justifyContent: 'flex-start', color: T.textMuted, fontSize: '18px', fontWeight: 'bold', paddingLeft: '8px' }}>
+              <span style={{ cursor: 'pointer' }}>···</span>
+            </div>
           </div>
         ))}
+
+        {filtered.length === 0 && (
+          <div style={{ padding: '40px', textAlign: 'center', color: T.textMuted, fontSize: '14px' }}>
+            No claims found matching the criteria.
+          </div>
+        )}
       </div>
     </div>
   );

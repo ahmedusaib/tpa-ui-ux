@@ -51,27 +51,35 @@ export default function BulkExceptionWorkbench() {
         </p>
       </div>
 
-      {/* Summary Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px', marginBottom: '22px' }}>
+      {/* Summary KPI Cards — WorkQueue style */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
         {[
-          { label: 'Total Uploaded',   value: 250, icon: '📦', color: T.primaryNavy },
-          { label: 'Valid Records',     value: 240, icon: '✅', color: T.commitGreen },
-          { label: 'Exceptions',        value: 10,  icon: '⚠️', color: T.error },
-          { label: 'Resolved',          value: resolved.length, icon: '🔧', color: T.goldAccent },
-        ].map(stat => (
-          <div key={stat.label} style={{
+          { label: 'Total Uploaded', value: 250,            trendText: 'batch total',   trendIcon: null,  trendColor: T.textMuted  },
+          { label: 'Valid Records',  value: 240,            trendText: 'ready',         trendIcon: '↑',   trendColor: T.commitGreen },
+          { label: 'Exceptions',    value: 10,             trendText: 'needs review',  trendIcon: '!',   trendColor: T.error      },
+          { label: 'Resolved',      value: resolved.length, trendText: 'fixed',        trendIcon: resolved.length > 0 ? '↑' : null, trendColor: T.goldAccent },
+        ].map(kpi => (
+          <div key={kpi.label} style={{
             background: T.cardSurface, border: `1px solid ${T.borderLight}`,
-            borderRadius: '12px', padding: '16px 18px',
-            borderLeft: `4px solid ${stat.color}`,
-            boxShadow: 'var(--shadow-card)',
+            borderRadius: '16px', padding: '20px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
+            display: 'flex', flexDirection: 'column', gap: '8px',
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-              <span style={{ fontSize: '20px' }}>{stat.icon}</span>
-              <span style={{ fontSize: '12px', color: T.textMuted }}>{stat.label}</span>
+            <div style={{ fontSize: '32px', fontWeight: 800, color: T.textPrimary, lineHeight: 1 }}>{kpi.value}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+              {kpi.trendIcon ? (
+                <span style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '2px',
+                  fontSize: '11px', fontWeight: 700, color: kpi.trendColor,
+                  background: `${kpi.trendColor}18`, padding: '4px 6px', borderRadius: '6px',
+                }}>
+                  {kpi.trendIcon} {kpi.trendText}
+                </span>
+              ) : (
+                <span style={{ fontSize: '12px', color: T.textMuted }}>{kpi.trendText}</span>
+              )}
             </div>
-            <div style={{ fontSize: '28px', fontWeight: 800, color: stat.color }}>
-              {stat.label === 'Resolved' ? resolved.length : stat.value}
-            </div>
+            <div style={{ fontSize: '13px', color: T.textSecondary, fontWeight: 500, marginTop: '2px' }}>{kpi.label}</div>
           </div>
         ))}
       </div>
@@ -148,7 +156,7 @@ export default function BulkExceptionWorkbench() {
               <Badge status={row.error} size="sm" />
               <span style={{ fontSize: '11px', color: T.textMuted, lineHeight: 1.3 }}>{row.errorDetail}</span>
               {isResolved ? (
-                <span style={{ fontSize: '12px', fontWeight: 700, color: T.commitGreen }}>✅ Resolved</span>
+                <span style={{ fontSize: '12px', fontWeight: 700, color: T.commitGreen }}>Resolved</span>
               ) : (
                 <Button
                   id={`fix-btn-row-${row.row}`}
@@ -156,7 +164,7 @@ export default function BulkExceptionWorkbench() {
                   size="sm"
                   onClick={() => openFix(row)}
                 >
-                  🔧 Fix & Resubmit
+                  Fix & Resubmit
                 </Button>
               )}
             </div>
@@ -172,10 +180,7 @@ export default function BulkExceptionWorkbench() {
           borderRadius: '12px', textAlign: 'center',
           animation: 'fadeIn 0.4s ease',
         }}>
-          <div style={{ fontSize: '28px', marginBottom: '6px' }}>🎉</div>
-          <div style={{ fontWeight: 700, fontSize: '16px', color: T.commitGreen }}>
-            All exceptions resolved!
-          </div>
+          <div style={{ fontWeight: 700, fontSize: '16px', color: T.commitGreen }}>All exceptions resolved!</div>
           <div style={{ fontSize: '13px', color: T.textMuted, marginTop: '4px' }}>
             10 records corrected and re-submitted to the Claims Work Queue.
           </div>
@@ -233,13 +238,13 @@ export default function BulkExceptionWorkbench() {
               border: '1px solid #bfdbfe', borderRadius: '8px',
               fontSize: '13px', color: T.stateBlue,
             }}>
-              💡 After correction, this record will be re-validated and added to the Claims Work Queue.
+              After correction, this record will be re-validated and added to the Claims Work Queue.
             </div>
 
             <div style={{ display: 'flex', gap: '10px' }}>
               <Button variant="secondary" fullWidth onClick={() => setFixModal(null)}>Cancel</Button>
               <Button variant="primary" fullWidth onClick={handleResolve}>
-                🚀 Correct & Re-submit
+                Correct & Re-submit
               </Button>
             </div>
           </div>

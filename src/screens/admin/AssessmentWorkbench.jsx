@@ -136,16 +136,21 @@ export default function AssessmentWorkbench() {
               📄 hospital_bill_AKU.pdf
             </span>
             <div style={{ display: 'flex', gap: '8px' }}>
-              {['🔍', '⬇️', '🖨️'].map(icon => (
-                <button key={icon} style={{
+              {[
+                { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>, title: 'Zoom/Search' },
+                { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>, title: 'Download Document' },
+                { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>, title: 'Print Document' }
+              ].map((item, idx) => (
+                <button key={idx} title={item.title} style={{
                   background: 'rgba(255,255,255,0.1)', border: 'none',
                   borderRadius: '6px', width: 30, height: 30,
-                  cursor: 'pointer', fontSize: '14px', color: '#fff',
+                  cursor: 'pointer', color: '#fff',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
                   transition: 'background 0.15s',
                 }}
                 onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
                 onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
-                >{icon}</button>
+                >{item.icon}</button>
               ))}
             </div>
           </div>
@@ -318,15 +323,17 @@ export default function AssessmentWorkbench() {
             </div>
           </div>
 
-          {/* Cross-Module Lookups */}
-          <CrossModulePanel />
+          {scanDone && (
+            <>
+              {/* Cross-Module Lookups */}
+              <CrossModulePanel />
 
-          {/* Adjudication Controls */}
-          <div style={{
-            background: T.cardSurface, border: `1px solid ${T.borderLight}`,
-            borderRadius: '12px', padding: '16px',
-            boxShadow: 'var(--shadow-card)',
-          }}>
+              {/* Adjudication Controls */}
+              <div style={{
+                background: T.cardSurface, border: `1px solid ${T.borderLight}`,
+                borderRadius: '12px', padding: '16px',
+                boxShadow: 'var(--shadow-card)',
+              }}>
             <h3 style={{ fontWeight: 700, fontSize: '14px', color: T.primaryNavy, marginBottom: '14px' }}>
               ⚖️ Adjudication Controls
             </h3>
@@ -440,6 +447,8 @@ export default function AssessmentWorkbench() {
               </div>
             )}
           </div>
+          </>
+          )}
         </div>
       </div>
 

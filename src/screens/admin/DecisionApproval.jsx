@@ -4,6 +4,62 @@ import Button from '../../components/UI/Button';
 import Badge from '../../components/UI/Badge';
 import Modal from '../../components/UI/Modal';
 
+// ── SVG Icon set (no emojis) ──────────────────────────────────────────────────
+const Ico = {
+  Doc: ({ color = 'currentColor' }) => (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+    </svg>
+  ),
+  Robot: ({ color = 'currentColor' }) => (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+    </svg>
+  ),
+  User: ({ color = 'currentColor' }) => (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+    </svg>
+  ),
+  Check: ({ color = 'currentColor' }) => (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+  ),
+  Payout: ({ color = 'currentColor' }) => (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+    </svg>
+  ),
+  FileLink: ({ color = 'currentColor' }) => (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/>
+    </svg>
+  ),
+  CircleCheck: ({ color = 'currentColor' }) => (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+    </svg>
+  ),
+  X: ({ color = 'currentColor' }) => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+  ),
+};
+
+// ── Workflow steps ────────────────────────────────────────────────────────────
+// currentStep = index of the ACTIVE step (0-based)
+const WORKFLOW_STEPS = [
+  { label: 'Claim Submitted',   sub: 'Subscriber Portal',     Icon: Ico.Doc,    color: T.stateBlue  },
+  { label: 'AI Assessment',     sub: 'Auto-adjudication',      Icon: Ico.Robot,  color: T.stateBlue  },
+  { label: 'Maker Review',      sub: 'Assessor Decision',      Icon: Ico.User,   color: T.primaryNavy},
+  { label: 'Checker Sign-off',  sub: 'Senior Authorization',   Icon: Ico.Check,  color: T.goldAccent, active: true },
+  { label: 'Payout Execution',  sub: 'Finance Disbursement',   Icon: Ico.Payout, color: T.commitGreen},
+];
+const CURRENT_STEP_IDX = 3; // "Checker Sign-off" is where we are
+
+// ── Data ─────────────────────────────────────────────────────────────────────
 const PENDING_APPROVALS = [
   {
     id: 'CLM-2026-48821', type: 'Hospitalization', subscriber: 'Jawad Saleem',
@@ -22,31 +78,26 @@ const PENDING_APPROVALS = [
 ];
 
 export default function DecisionApproval() {
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected]         = useState(null);
   const [checkerNotes, setCheckerNotes] = useState('');
-  const [approvedIds, setApprovedIds] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [modalAction, setModalAction] = useState('');
+  const [approvedIds, setApprovedIds]   = useState([]);
+  const [showModal, setShowModal]       = useState(false);
+  const [modalAction, setModalAction]   = useState('');
 
-  const claim = PENDING_APPROVALS.find(c => c.id === selected);
+  const claim   = PENDING_APPROVALS.find(c => c.id === selected);
+  const pending = PENDING_APPROVALS.filter(c => !approvedIds.includes(c.id));
 
-  const handleAction = (action) => {
-    setModalAction(action);
-    setShowModal(true);
-  };
-
+  const handleAction = (action) => { setModalAction(action); setShowModal(true); };
   const confirmAction = () => {
-    if (modalAction === 'Approve') {
-      setApprovedIds(prev => [...prev, selected]);
-    }
+    if (modalAction === 'Approve') setApprovedIds(prev => [...prev, selected]);
     setShowModal(false);
     setSelected(null);
   };
 
-  const pending = PENDING_APPROVALS.filter(c => !approvedIds.includes(c.id));
-
   return (
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
+
+      {/* Page Title */}
       <div style={{ marginBottom: '22px' }}>
         <h1 style={{ fontSize: '22px', fontWeight: 800, color: T.primaryNavy, marginBottom: '4px' }}>
           Decision & Approval Workstation
@@ -56,54 +107,90 @@ export default function DecisionApproval() {
         </p>
       </div>
 
-      {/* Maker-Checker Diagram */}
+      {/* ── Maker-Checker Workflow Timeline ─────────────────────────────────── */}
       <div style={{
-        display: 'flex', alignItems: 'center', gap: 0,
         background: T.cardSurface, border: `1px solid ${T.borderLight}`,
-        borderRadius: '12px', padding: '16px 24px', marginBottom: '20px',
-        boxShadow: 'var(--shadow-card)',
+        borderRadius: '14px', padding: '20px 28px', marginBottom: '24px',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
         overflowX: 'auto',
       }}>
-        {[
-          { icon: '📋', label: 'Claim Submitted', sub: 'Subscriber Portal', color: T.stateBlue },
-          { icon: '🤖', label: 'AI Assessment', sub: 'Auto-adjudication', color: T.stateBlue },
-          { icon: '👤', label: 'Maker Review', sub: 'Assessor Decision', color: T.primaryNavy },
-          { icon: '✅', label: 'Checker Sign-off', sub: 'Senior Authorization', color: T.goldAccent, active: true },
-          { icon: '💳', label: 'Payout Execution', sub: 'Finance Disbursement', color: T.commitGreen },
-        ].map((step, i, arr) => (
-          <React.Fragment key={step.label}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '100px' }}>
-              <div style={{
-                width: 42, height: 42, borderRadius: '50%',
-                background: step.active ? step.color : '#e8edf2',
-                border: step.active ? `3px solid ${step.color}` : '3px solid #c5cad0',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '18px', marginBottom: '8px',
-                boxShadow: step.active ? `0 0 0 5px rgba(205,146,78,0.2)` : 'none',
-              }}>{step.icon}</div>
-              <div style={{ fontWeight: step.active ? 700 : 500, fontSize: '12px', color: step.active ? step.color : T.textSecondary, textAlign: 'center' }}>{step.label}</div>
-              <div style={{ fontSize: '10px', color: T.textMuted, textAlign: 'center' }}>{step.sub}</div>
-            </div>
-            {i < arr.length - 1 && (
-              <div style={{ flex: 1, height: '2px', background: '#e2e8f0', margin: '0 4px 20px' }} />
-            )}
-          </React.Fragment>
-        ))}
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          {WORKFLOW_STEPS.map((step, i) => {
+            const isDone   = i <= CURRENT_STEP_IDX;
+            const isActive = i === CURRENT_STEP_IDX;
+            const stepColor = isDone ? step.color : T.borderDefault;
+            const lineColor = i < CURRENT_STEP_IDX ? WORKFLOW_STEPS[i].color : T.borderLight;
+
+            return (
+              <React.Fragment key={step.label}>
+                {/* Step Node */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '110px' }}>
+                  <div style={{
+                    width: 42, height: 42, borderRadius: '50%',
+                    background: isDone ? `${stepColor}18` : '#f1f5f9',
+                    border: `2px solid ${stepColor}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    marginBottom: '10px',
+                    boxShadow: isActive ? `0 0 0 6px ${stepColor}22` : 'none',
+                    transition: 'all 0.3s ease',
+                  }}>
+                    <step.Icon color={isDone ? step.color : T.borderDefault} />
+                  </div>
+                  <div style={{
+                    fontWeight: isActive ? 700 : isDone ? 600 : 400,
+                    fontSize: '12px',
+                    color: isDone ? step.color : T.textMuted,
+                    textAlign: 'center', lineHeight: 1.3,
+                  }}>
+                    {step.label}
+                  </div>
+                  <div style={{ fontSize: '10px', color: T.textMuted, textAlign: 'center', marginTop: '2px' }}>
+                    {step.sub}
+                  </div>
+                </div>
+
+                {/* Connector */}
+                {i < WORKFLOW_STEPS.length - 1 && (
+                  <div style={{
+                    flex: 1, height: '2px',
+                    background: lineColor,
+                    margin: '0 4px 30px',
+                    transition: 'background 0.4s ease',
+                  }} />
+                )}
+              </React.Fragment>
+            );
+          })}
+        </div>
       </div>
 
+      {/* ── Pending Queue + Detail Panel ─────────────────────────────────────── */}
       <div style={{ display: 'grid', gridTemplateColumns: pending.length && selected ? '1fr 1.1fr' : '1fr', gap: '16px' }}>
-        {/* Pending Queue */}
+
+        {/* Left: Pending Cards */}
         <div>
           <h3 style={{ fontSize: '14px', fontWeight: 700, color: T.primaryNavy, marginBottom: '12px' }}>
             Pending Checker Authorization ({pending.length})
           </h3>
+
           {pending.length === 0 ? (
             <div style={{
               textAlign: 'center', padding: '40px',
               background: T.cardSurface, borderRadius: '12px',
-              border: `1px solid ${T.borderLight}`, color: T.textMuted,
+              border: `1px solid ${T.borderLight}`,
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px',
             }}>
-              ✅ All items signed off — queue is clear!
+              <div style={{
+                width: 48, height: 48, borderRadius: '50%',
+                background: `${T.commitGreen}15`,
+                border: `2px solid ${T.commitGreen}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <Ico.Check color={T.commitGreen} />
+              </div>
+              <span style={{ fontSize: '14px', color: T.textMuted, fontWeight: 500 }}>
+                All items signed off — queue is clear!
+              </span>
             </div>
           ) : (
             pending.map((c, i) => (
@@ -113,17 +200,19 @@ export default function DecisionApproval() {
                 style={{
                   background: T.cardSurface,
                   border: `1px solid ${selected === c.id ? T.primaryNavy : T.borderLight}`,
-                  borderRadius: '10px', padding: '16px',
+                  borderRadius: '12px', padding: '16px',
                   marginBottom: '10px', cursor: 'pointer',
-                  boxShadow: selected === c.id ? '0 0 0 3px rgba(15,76,122,0.12)' : 'var(--shadow-card)',
+                  boxShadow: selected === c.id ? '0 0 0 3px rgba(15,76,122,0.1)' : '0 2px 8px rgba(0,0,0,0.02)',
                   transition: 'all 0.18s ease',
                   animation: `fadeIn 0.3s ease ${i * 0.1}s both`,
                 }}
+                onMouseEnter={e => { if (selected !== c.id) e.currentTarget.style.borderColor = T.borderDefault; }}
+                onMouseLeave={e => { if (selected !== c.id) e.currentTarget.style.borderColor = T.borderLight; }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
                   <div>
                     <div style={{ fontWeight: 700, fontSize: '14px', color: T.primaryNavy }}>{c.id}</div>
-                    <div style={{ fontSize: '12px', color: T.textMuted }}>{c.type} · {c.subscriber}</div>
+                    <div style={{ fontSize: '12px', color: T.textMuted, marginTop: '2px' }}>{c.type} · {c.subscriber}</div>
                   </div>
                   <Badge status={c.riskLevel} />
                 </div>
@@ -136,37 +225,42 @@ export default function DecisionApproval() {
                       Maker: {c.assessor} · {c.makerDate}
                     </div>
                   </div>
-                  <Badge status="Awaiting Checker" style={{ background: '#fff7ed', color: T.goldAccent, border: `1px solid #fed7aa` }} />
+                  <span style={{
+                    fontSize: '11px', fontWeight: 700,
+                    background: '#fff7ed', color: T.goldAccent,
+                    border: `1px solid #fed7aa`,
+                    padding: '4px 10px', borderRadius: '6px',
+                  }}>
+                    Awaiting Checker
+                  </span>
                 </div>
               </div>
             ))
           )}
         </div>
 
-        {/* Detail Panel */}
+        {/* Right: Detail Panel */}
         {selected && claim && (
-          <div style={{ animation: 'slideInRight 0.25s ease' }}>
+          <div style={{ animation: 'fadeIn 0.25s ease' }}>
             <h3 style={{ fontSize: '14px', fontWeight: 700, color: T.primaryNavy, marginBottom: '12px' }}>
               Checker Review — {selected}
             </h3>
             <div style={{
               background: T.cardSurface, border: `1px solid ${T.borderLight}`,
               borderRadius: '12px', padding: '20px',
-              boxShadow: 'var(--shadow-card)',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
             }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+              {/* Data Grid */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
                 {[
-                  ['Subscriber', claim.subscriber],
-                  ['Claim Type', claim.type],
-                  ['Original Amount', `PKR ${claim.amount.toLocaleString()}`],
-                  ['Deductible', `PKR ${claim.deductible.toLocaleString()}`],
-                  ['Net Payable', `PKR ${claim.payable.toLocaleString()}`],
-                  ['Assessed by', claim.assessor],
+                  ['Subscriber',       claim.subscriber],
+                  ['Claim Type',       claim.type],
+                  ['Original Amount',  `PKR ${claim.amount.toLocaleString()}`],
+                  ['Deductible',       `PKR ${claim.deductible.toLocaleString()}`],
+                  ['Net Payable',      `PKR ${claim.payable.toLocaleString()}`],
+                  ['Assessed by',      claim.assessor],
                 ].map(([l, v]) => (
-                  <div key={l} style={{
-                    background: T.pageCanvas, borderRadius: '8px',
-                    padding: '10px 12px',
-                  }}>
+                  <div key={l} style={{ background: T.pageCanvas, borderRadius: '8px', padding: '10px 12px' }}>
                     <div style={{ fontSize: '11px', color: T.textMuted, marginBottom: '2px' }}>{l}</div>
                     <div style={{ fontSize: '13px', fontWeight: 700, color: T.textPrimary }}>{v}</div>
                   </div>
@@ -175,7 +269,9 @@ export default function DecisionApproval() {
 
               {/* Documents */}
               <div style={{ marginBottom: '16px' }}>
-                <div style={{ fontSize: '12px', fontWeight: 600, color: T.textMuted, marginBottom: '8px' }}>ATTACHED DOCUMENTS</div>
+                <div style={{ fontSize: '11px', fontWeight: 700, color: T.textMuted, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '8px' }}>
+                  Attached Documents
+                </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   {claim.docs.map(doc => (
                     <div key={doc} style={{
@@ -183,8 +279,10 @@ export default function DecisionApproval() {
                       padding: '8px 12px', background: T.pageCanvas,
                       borderRadius: '6px', fontSize: '12px',
                     }}>
-                      <span>📄</span>
-                      <span style={{ color: T.stateBlue, fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>{doc}</span>
+                      <Ico.FileLink color={T.stateBlue} />
+                      <span style={{ color: T.stateBlue, fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>
+                        {doc}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -210,12 +308,17 @@ export default function DecisionApproval() {
                 />
               </div>
 
+              {/* Action Buttons */}
               <div style={{ display: 'flex', gap: '10px' }}>
                 <Button variant="commit" fullWidth onClick={() => handleAction('Approve')}>
-                  ✅ Authorize & Initiate Payout
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                    <Ico.CircleCheck color="#fff" /> Authorize & Initiate Payout
+                  </span>
                 </Button>
                 <Button variant="danger" fullWidth onClick={() => handleAction('Reject')}>
-                  ❌ Override Reject
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                    <Ico.X color="#fff" /> Override Reject
+                  </span>
                 </Button>
               </div>
             </div>
@@ -234,7 +337,12 @@ export default function DecisionApproval() {
         <div style={{ display: 'flex', gap: '10px' }}>
           <Button variant="secondary" fullWidth onClick={() => setShowModal(false)}>Cancel</Button>
           <Button variant={modalAction === 'Approve' ? 'commit' : 'danger'} fullWidth onClick={confirmAction}>
-            {modalAction === 'Approve' ? '✅ Confirm Authorization' : '❌ Confirm Rejection'}
+            <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+              {modalAction === 'Approve'
+                ? <><Ico.CircleCheck color="#fff" /> Confirm Authorization</>
+                : <><Ico.X color="#fff" /> Confirm Rejection</>
+              }
+            </span>
           </Button>
         </div>
       </Modal>
