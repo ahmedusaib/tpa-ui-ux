@@ -92,15 +92,30 @@ export default function Sidebar({ role, activeScreen, onNavigate }) {
         borderBottom: '1px solid rgba(255,255,255,0.1)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* EFU Life logo badge */}
           <div style={{
-            width: 34, height: 34, borderRadius: '9px',
-            background: 'linear-gradient(135deg, #cd924e, #e8b07a)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '18px', fontWeight: 800, color: '#fff',
+            width: 40, height: 40, borderRadius: '10px',
+            background: '#c0392b',
+            display: 'flex', flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'center',
             flexShrink: 0,
-          }}>A</div>
+            boxShadow: '0 2px 8px rgba(192,57,43,0.45)',
+            lineHeight: 1,
+            padding: '3px 4px',
+          }}>
+            <span style={{
+              fontSize: '12px', fontWeight: 900, color: '#fff',
+              letterSpacing: '-0.5px', lineHeight: 1,
+              fontFamily: 'Georgia, serif', fontStyle: 'italic',
+            }}>efu</span>
+            <span style={{
+              fontSize: '6.5px', fontWeight: 700, color: 'rgba(255,255,255,0.85)',
+              letterSpacing: '0.15em', lineHeight: 1, marginTop: '1px',
+              textTransform: 'uppercase',
+            }}>LIFE</span>
+          </div>
           <div>
-            <div style={{ fontWeight: 800, fontSize: '13px', color: '#fff', lineHeight: 1.2 }}>Adamjee Life</div>
+            <div style={{ fontWeight: 800, fontSize: '13px', color: '#fff', lineHeight: 1.2 }}>EFU Life</div>
             <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.55)', fontWeight: 500 }}>ERP Platform</div>
           </div>
         </div>
