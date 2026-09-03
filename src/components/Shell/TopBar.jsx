@@ -1,6 +1,19 @@
 import React, { useState } from 'react';
 import { T } from '../../tokens';
 
+const Icons = {
+  User: ({ color = "currentColor" }) => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+    </svg>
+  ),
+  Building: ({ color = "currentColor" }) => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+    </svg>
+  ),
+};
+
 export default function TopBar({ role, onRoleSwitch, activeScreen }) {
   const [hoverUser, setHoverUser] = useState(false);
   const [hoverAdmin, setHoverAdmin] = useState(false);
@@ -81,7 +94,8 @@ export default function TopBar({ role, onRoleSwitch, activeScreen }) {
               boxShadow: role === 'user' ? '0 2px 8px rgba(15,76,122,0.25)' : 'none',
             }}
           >
-            <span>👤</span> User Portal
+            <Icons.User color={role === 'user' ? '#fff' : T.textSecondary} />
+            <span>User Portal</span>
           </button>
 
           {/* Admin Tab */}
@@ -105,22 +119,9 @@ export default function TopBar({ role, onRoleSwitch, activeScreen }) {
               boxShadow: role === 'admin' ? '0 2px 8px rgba(15,76,122,0.25)' : 'none',
             }}
           >
-            <span>🏢</span> Admin ERP
+            <Icons.Building color={role === 'admin' ? '#fff' : T.textSecondary} />
+            <span>Admin ERP</span>
           </button>
-        </div>
-
-        {/* Notification Bell */}
-        <div style={{ position: 'relative', cursor: 'pointer' }}>
-          <span style={{ fontSize: '20px' }}>🔔</span>
-          <span style={{
-            position: 'absolute', top: -3, right: -3,
-            width: 16, height: 16,
-            background: T.error, color: '#fff',
-            fontSize: '9px', fontWeight: 700,
-            borderRadius: '50%',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            border: '2px solid #fff',
-          }}>3</span>
         </div>
 
         {/* Avatar */}
