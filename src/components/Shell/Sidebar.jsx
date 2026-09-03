@@ -1,5 +1,6 @@
 import React from 'react';
 import { T } from '../../tokens';
+import efuLogo from '../../assets/efu-logo.png';
 
 // Clean SVG icon components — no emojis
 const Icons = {
@@ -92,28 +93,16 @@ export default function Sidebar({ role, activeScreen, onNavigate }) {
         borderBottom: '1px solid rgba(255,255,255,0.1)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {/* EFU Life logo badge */}
-          <div style={{
-            width: 40, height: 40, borderRadius: '10px',
-            background: '#c0392b',
-            display: 'flex', flexDirection: 'column',
-            alignItems: 'center', justifyContent: 'center',
-            flexShrink: 0,
-            boxShadow: '0 2px 8px rgba(192,57,43,0.45)',
-            lineHeight: 1,
-            padding: '3px 4px',
-          }}>
-            <span style={{
-              fontSize: '12px', fontWeight: 900, color: '#fff',
-              letterSpacing: '-0.5px', lineHeight: 1,
-              fontFamily: 'Georgia, serif', fontStyle: 'italic',
-            }}>efu</span>
-            <span style={{
-              fontSize: '6.5px', fontWeight: 700, color: 'rgba(255,255,255,0.85)',
-              letterSpacing: '0.15em', lineHeight: 1, marginTop: '1px',
-              textTransform: 'uppercase',
-            }}>LIFE</span>
-          </div>
+          {/* EFU Life logo image */}
+          <img
+            src={efuLogo}
+            alt="EFU Life Logo"
+            style={{
+              width: 40, height: 40, borderRadius: '8px',
+              objectFit: 'contain', flexShrink: 0,
+              background: '#c0392b',
+            }}
+          />
           <div>
             <div style={{ fontWeight: 800, fontSize: '13px', color: '#fff', lineHeight: 1.2 }}>EFU Life</div>
             <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.55)', fontWeight: 500 }}>ERP Platform</div>
