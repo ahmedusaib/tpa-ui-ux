@@ -6,9 +6,9 @@
    ADAMJEE LIFE — Design System CSS Variables & Global Reset
    ============================================================ */
 
-:root {
+/* :root {
   /* Brand Colors */
-  --color-primary-navy: #0f4c7a;
+  /* --color-primary-navy: #0f4c7a;
   --color-state-blue: #1b75bb;
   --color-dark-surface-1: #0b2b3d;
   --color-dark-surface-2: #0f3a52;
@@ -20,29 +20,181 @@
   --color-error-bg: #fef2f0;
 
   /* Typography */
-  --font-family: 'Plus Jakarta Sans', sans-serif;
+  /* --font-family: 'Plus Jakarta Sans', sans-serif;
   --font-weight-default: 500;
 
   /* Control Heights */
-  --height-chip: 32px;
+  /* --height-chip: 32px;
   --height-input: 42px;
   --height-button: 44px;
-  --height-cta: 48px;
+  --height-cta: 48px; */
 
   /* Border */
-  --border-input: 1px solid #c5cad0;
+  /* --border-input: 1px solid #c5cad0;
   --radius-input: 8px;
-  --radius-button: 9px;
+  --radius-button: 9px; */ */ */
 
   /* Shadows */
-  --shadow-focus: 0 0 0 3px rgba(4, 61, 91, 0.15);
+  /* --shadow-focus: 0 0 0 3px rgba(4, 61, 91, 0.15);
   --shadow-card-hover: 0 4px 16px rgba(15, 24, 31, 0.06);
   --shadow-card: 0 1px 4px rgba(15, 24, 31, 0.07);
   --shadow-modal: 0 20px 60px rgba(15, 24, 31, 0.18);
 
   /* Sidebar */
+  /* --sidebar-width: 240px;
+  --topbar-height: 60px; */
+/* } */ */ */
+:root {
+
+  /* ---------- 1. BRAND ---------------------------------------------------
+     Navy is the action colour (buttons, links, key figures).
+     Blue is hover / focus / active-state and the accent rule.
+     Gold is reserved: counts, "popular" flags, premium framing. Never a CTA. */
+
+  --color-primary-navy:       #0f4c7a;  /* primary action, headings on light  */
+  --color-dark-surface-1:     #0b2b3d;  /* dark canvas (scanner, media)       */
+  --color-dark-surface-2:     #0f3a52;  /* raised block on dark canvas        */
+  --color-state-blue:         #1b75bb;  /* hover, focus border, active rule   */
+  --color-blue-tint:          #eaf3fa;  /* avatar / icon pad, soft info fill  */
+  --color-blue-tint-alt:      #eef4f8;  /* active row in a step list          */
+  --color-blue-on-dark:       #a9c6dd;  /* secondary text on navy-deep        */
+
+  --color-gold-accent:        #cd924e;  /* badge fill, ornamental border      */
+  --color-gold-strong:        #b07f38;  /* gold text where fill is too light  */
+  --color-gold-tint:          #f7eddf;  /* "Popular" chip fill                */
+  --color-gold-border:        #e3cba4;  /* "Popular" chip border              */
+  --color-gold-ink:           #8a5f1b;  /* text on gold-tint (4.86:1)         */
+
+  /* ---------- 2. INK (text) ----------------------------------------------- */
+
+  --color-ink-strong:         #0f181f;  /* headings, values      17.9:1 on white */
+  --color-ink-body:           #43535f;  /* dense list copy        7.95:1 */
+  --color-ink-muted:          #5b6b78;  /* secondary copy, labels 5.50:1 */
+  --color-ink-subtle:         #7d8b96;  /* eyebrows, meta         3.50:1 — 14px+ / 700 only */
+  --color-ink-faint:          #9aa5ac;  /* placeholder            2.51:1 — non-text only */
+  --color-ink-disabled:       #a3aeb8;  /* pending step label     2.26:1 — non-text only */
+  --color-ink-inverse:        #ffffff;
+
+  /* ---------- 3. SURFACE -------------------------------------------------- */
+
+  --color-page-canvas:        #f4f8fb;
+  --color-card-surface:       #ffffff;
+  --color-surface-raised:     #f9fbfc;
+  --color-surface-raised-alt: #fbfdfe;
+  --color-surface-inset:      #eef2f5;
+  --color-surface-inset-alt:  #e3e9ee;
+  --color-surface-inset-deep: #e8edf1;
+
+  /* ---------- 4. BORDER ---------------------------------------------------- */
+
+  --color-border-default:     #c5cad0;
+  --color-border-subtle:      #e5e9ec;
+  --color-border-quiet:       #dde4ea;
+  --color-border-strong:      #b6c6d2;
+  --color-border-focus:       var(--color-state-blue);
+
+  /* ---------- 5. STATUS ---------------------------------------------------- */
+
+  --color-success-ink:        #0a7a52;
+  --color-success-tint:       #e7f5ee;
+  --color-commit-green:       #00a651;
+  --color-success-hover:      #00b85b;
+
+  --color-error:               #b42318;
+  --color-danger-solid:        #b3261e;
+  --color-error-bg:            #fdecea;
+  --color-danger-tint-row:     #fdefed;
+  --color-danger-icon:         #a6402f;
+
+  /* ---------- 6. ALPHA / OVERLAY ------------------------------------------- */
+
+  --alpha-focus:               rgba(4, 61, 91, .15);
+  --alpha-scrim:                rgba(4, 24, 37, .55);
+  --alpha-shadow-modal:         rgba(4, 24, 37, .40);
+  --alpha-on-dark-08:           rgba(255, 255, 255, .10);
+  --alpha-on-dark-12:           rgba(255, 255, 255, .12);
+  --alpha-on-dark-24:           rgba(255, 255, 255, .24);
+  --alpha-on-dark-30:           rgba(255, 255, 255, .30);
+
+  /* ---------- 7. TYPOGRAPHY ------------------------------------------------ */
+
+  --font-family: 'Plus Jakarta Sans', 'Noto Naskh Arabic', system-ui, sans-serif;
+  --font-family-arabic: 'Noto Naskh Arabic', 'Plus Jakarta Sans', serif;
+  --font-weight-default: 500;
+
+  --text-display: 30px; --text-h1: 28px; --text-h2: 24px; --text-h3: 21px;
+  --text-h4: 19px; --text-h5: 16px; --text-lead: 15px; --text-body: 14px;
+  --text-body-sm: 13.5px; --text-base: 13px; --text-sm: 12.5px; --text-xs: 12px;
+  --text-2xs: 11.5px; --text-3xs: 11px; --text-micro: 10px; --text-nano: 9.5px;
+
+  --leading-tight: 1.15; --leading-snug: 1.3; --leading-normal: 1.45;
+  --leading-relaxed: 1.55; --leading-loose: 1.6;
+
+  --tracking-tight: -.3px; --tracking-wide: .4px; --tracking-wider: .6px;
+
+  /* ---------- 8. SPACE (4px base, 2px sub-step) ---------------------------- */
+
+  --space-1: 2px; --space-2: 4px; --space-3: 6px; --space-4: 8px; --space-5: 10px;
+  --space-6: 12px; --space-7: 16px; --space-8: 20px; --space-9: 24px; --space-10: 28px;
+  --space-11: 34px; --space-12: 40px; --space-13: 60px;
+
+  /* ---------- 9. RADIUS ------------------------------------------------------ */
+
+  --radius-xs: 3px; --radius-sm: 5px; --radius-md: 8px; --radius-lg: 9px;
+  --radius-xl: 10px; --radius-2xl: 12px; --radius-3xl: 16px; --radius-full: 999px;
+
+  /* legacy aliases used by existing components */
+  --radius-input: 8px;
+  --radius-button: 9px;
+
+  /* ---------- 10. CONTROL SIZE ----------------------------------------------- */
+
+  --control-sm: 30px; --control-chip: 32px; --control-md: 42px; --control-lg: 44px;
+  --control-xl: 46px; --control-2xl: 48px; --header-height: 74px; --container-max: 1400px;
+
+  /* legacy aliases used by existing components */
+  --height-chip: 32px;
+  --height-input: 42px;
+  --height-button: 44px;
+  --height-cta: 48px;
+  --border-input: 1px solid #c5cad0;
+
+  /* ---------- 11. ELEVATION --------------------------------------------------- */
+
+  --shadow-focus:   0 0 0 3px var(--alpha-focus);
+  --shadow-hover:   0 4px 14px rgba(15, 24, 31, .06);
+  --shadow-raised:  0 8px 18px rgba(4, 61, 91, .18);
+  --shadow-fab:     0 8px 18px rgba(4, 61, 91, .35);
+  --shadow-popover: 0 16px 34px rgba(4, 61, 91, .28);
+  --shadow-modal:   0 24px 60px var(--alpha-shadow-modal);
+  --glow-gold:      0 0 18px 4px rgba(205, 146, 78, .55);
+
+  /* legacy aliases used by existing components */
+  --shadow-card:       0 1px 4px rgba(15, 24, 31, .07);
+  --shadow-card-hover: 0 4px 16px rgba(15, 24, 31, .06);
+
+  /* ---------- 12. MOTION ------------------------------------------------------ */
+
+  --duration-fast: 150ms; --duration-base: 220ms; --duration-slow: 300ms; --duration-progress: 520ms;
+  --ease-standard: ease; --ease-progress: cubic-bezier(.3, .8, .3, 1); --ease-pop: cubic-bezier(.3, 1.4, .5, 1);
+
+  /* ---------- Sidebar / Layout -------------------------------------------- */
   --sidebar-width: 240px;
   --topbar-height: 60px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 1ms;
+    --duration-base: 1ms;
+    --duration-slow: 1ms;
+    --duration-progress: 1ms;
+  }
+}
+
+/* ---------- Right-to-left (Urdu) --------------------------------------- */
+[dir="rtl"] {
+  --font-family: var(--font-family-arabic);
 }
 
 *, *::before, *::after {

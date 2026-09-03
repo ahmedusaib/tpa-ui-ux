@@ -1,5 +1,6 @@
 import React from 'react';
 import { T } from '../../tokens';
+import efuLogo from '../../assets/efu-logo.png';
 
 // Clean SVG icon components — no emojis
 const Icons = {
@@ -98,9 +99,11 @@ export default function Sidebar({ role, activeScreen, onNavigate }) {
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: '18px', fontWeight: 800, color: '#fff',
             flexShrink: 0,
-          }}>A</div>
+          }}>
+            <img src={efuLogo} alt="EFU Life" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+</div>
           <div>
-            <div style={{ fontWeight: 800, fontSize: '13px', color: '#fff', lineHeight: 1.2 }}>Adamjee Life</div>
+            <div style={{ fontWeight: 800, fontSize: '13px', color: '#fff', lineHeight: 1.2 }}> EFU Life</div>
             <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.55)', fontWeight: 500 }}>ERP Platform</div>
           </div>
         </div>
