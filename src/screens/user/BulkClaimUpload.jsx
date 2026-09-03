@@ -4,7 +4,7 @@ import Button from '../../components/UI/Button';
 import Badge from '../../components/UI/Badge';
 import Modal from '../../components/UI/Modal';
 
-// Explicit paired icons for accessibility (color + icon requirement)
+// Clean SVG Icon System (No emojis)
 const Icons = {
   Spinner: ({ color = T.primaryNavy, size = 14 }) => (
     <svg
@@ -53,7 +53,20 @@ const Icons = {
       <polyline points="14 2 14 8 20 8" />
       <line x1="16" y1="13" x2="8" y2="13" />
       <line x1="16" y1="17" x2="8" y2="17" />
-      <polyline points="10 9 9 9 8 9" />
+    </svg>
+  ),
+  UploadCloud: ({ color = T.primaryNavy, size = 42 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 16l-4-4-4 4" />
+      <path d="M12 12v9" />
+      <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
+    </svg>
+  ),
+  Rocket: ({ color = "currentColor", size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.71.79-1.81.79-1.81l-1.98-1.98s-1.1.08-1.81.79z" />
+      <path d="M15 8s-4-4-9 1l8 8c5-5 1-9 1-9z" />
+      <line x1="13" y1="11" x2="17" y2="7" />
     </svg>
   ),
   Play: ({ color = "currentColor", size = 13 }) => (
@@ -167,11 +180,6 @@ export default function BulkClaimUpload({ onNavigate, onRoleSwitch }) {
   const [inspectModalRow, setInspectModalRow] = useState(null);
 
   const logContainerRef = useRef(null);
-
-  const templateColumns = [
-    'Policy Number', 'Claimant Name', 'Relationship', 'Contact Mobile',
-    'Benefit Category', 'Incident Date', 'Facility Name', 'Claim Amount (PKR)', 'Description',
-  ];
 
   const handleFileSelect = (f) => {
     if (!f) return;
@@ -303,85 +311,61 @@ export default function BulkClaimUpload({ onNavigate, onRoleSwitch }) {
         ) : null}
       </div>
 
-      {/* ── MODE 1: FILE DROPZONE & INSTRUCTIONS ── */}
+      {/* ── MODE 1: FILE UPLOAD DROPZONE ── */}
       {!isProcessing && !done && (
-        <>
-          <div style={{
-            background: T.cardSurface, border: `1px solid ${T.borderLight}`,
-            borderRadius: '12px', padding: '20px 24px', marginBottom: '20px',
-            boxShadow: '0 2px 8px rgba(15, 76, 122, 0.04)',
-          }}>
-            <h3 style={{ fontSize: '14px', fontWeight: 700, color: T.primaryNavy, marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              📋 Standard Batch CSV Schema (250 Records per Batch)
-            </h3>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '16px' }}>
-              {templateColumns.map((col, i) => (
-                <span key={i} style={{
-                  background: '#eff6ff', color: T.stateBlue,
-                  border: '1px solid #bfdbfe',
-                  borderRadius: '6px', padding: '4px 10px',
-                  fontSize: '12px', fontWeight: 600,
-                }}>{col}</span>
-              ))}
+        <div style={{
+          background: T.cardSurface, border: `1px solid ${T.borderLight}`,
+          borderRadius: '12px', padding: '28px', marginBottom: '24px',
+          boxShadow: '0 2px 8px rgba(15, 76, 122, 0.04)',
+        }}>
+          <div
+            onDragOver={e => { e.preventDefault(); setDragging(true); }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={e => { e.preventDefault(); setDragging(false); handleFileSelect(e.dataTransfer.files[0]); }}
+            onClick={() => inputRef.current && inputRef.current.click()}
+            style={{
+              border: `2px dashed ${dragging ? T.stateBlue : file ? T.commitGreen : T.borderDefault}`,
+              borderRadius: '10px', padding: '40px 20px',
+              textAlign: 'center', cursor: 'pointer',
+              background: dragging ? '#eff6ff' : file ? '#f0fdf4' : '#fafbfc',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            <input ref={inputRef} type="file" accept=".csv,.xlsx" onChange={e => handleFileSelect(e.target.files[0])} style={{ display: 'none' }} />
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '14px' }}>
+              <Icons.UploadCloud color={dragging ? T.stateBlue : file ? T.commitGreen : T.primaryNavy} size={42} />
             </div>
-            <Button variant="secondary" size="sm">
-              ⬇️ Download Standard Template CSV
+            {file ? (
+              <>
+                <div style={{ fontWeight: 700, fontSize: '15px', color: T.commitGreen }}>{file.name}</div>
+                <div style={{ fontSize: '12px', color: T.textMuted, marginTop: '4px' }}>
+                  {(file.size / 1024).toFixed(1)} KB · 250 Records Ready · Click to replace file
+                </div>
+              </>
+            ) : (
+              <>
+                <div style={{ fontWeight: 600, fontSize: '15px', color: T.textPrimary }}>
+                  {dragging ? 'Drop CSV file here' : 'Drag & drop batch CSV file here, or click to browse'}
+                </div>
+                <div style={{ fontSize: '12px', color: T.textMuted, marginTop: '6px' }}>
+                  Supports .csv and .xlsx files · Pre-configured with 250 claim batch stream
+                </div>
+              </>
+            )}
+          </div>
+
+          <div style={{ marginTop: '20px' }}>
+            <Button
+              variant="primary"
+              fullWidth
+              onClick={startIngestion}
+              icon={<Icons.Rocket color="#fff" size={16} />}
+              style={{ height: '48px', fontSize: '15px' }}
+            >
+              Process Batch File (250 Records Ticker)
             </Button>
           </div>
-
-          <div style={{
-            background: T.cardSurface, border: `1px solid ${T.borderLight}`,
-            borderRadius: '12px', padding: '28px', marginBottom: '24px',
-            boxShadow: '0 2px 8px rgba(15, 76, 122, 0.04)',
-          }}>
-            <div
-              onDragOver={e => { e.preventDefault(); setDragging(true); }}
-              onDragLeave={() => setDragging(false)}
-              onDrop={e => { e.preventDefault(); setDragging(false); handleFileSelect(e.dataTransfer.files[0]); }}
-              onClick={() => inputRef.current && inputRef.current.click()}
-              style={{
-                border: `2px dashed ${dragging ? T.stateBlue : file ? T.commitGreen : T.borderDefault}`,
-                borderRadius: '10px', padding: '36px 20px',
-                textAlign: 'center', cursor: 'pointer',
-                background: dragging ? '#eff6ff' : file ? '#f0fdf4' : '#fafbfc',
-                transition: 'all 0.2s ease',
-              }}
-            >
-              <input ref={inputRef} type="file" accept=".csv,.xlsx" onChange={e => handleFileSelect(e.target.files[0])} style={{ display: 'none' }} />
-              <div style={{ fontSize: '42px', marginBottom: '12px' }}>
-                {file ? '📊' : dragging ? '📂' : '📁'}
-              </div>
-              {file ? (
-                <>
-                  <div style={{ fontWeight: 700, fontSize: '15px', color: T.commitGreen }}>{file.name}</div>
-                  <div style={{ fontSize: '12px', color: T.textMuted, marginTop: '4px' }}>
-                    {(file.size / 1024).toFixed(1)} KB · 250 Records Ready · Click to replace file
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div style={{ fontWeight: 600, fontSize: '15px', color: T.textPrimary }}>
-                    {dragging ? 'Drop CSV file here' : 'Drag & drop batch CSV file here, or click to browse'}
-                  </div>
-                  <div style={{ fontSize: '12px', color: T.textMuted, marginTop: '6px' }}>
-                    Supports .csv and .xlsx files · Pre-configured with 250 claim batch stream
-                  </div>
-                </>
-              )}
-            </div>
-
-            <div style={{ marginTop: '20px' }}>
-              <Button
-                variant="primary"
-                fullWidth
-                onClick={startIngestion}
-                style={{ height: '48px', fontSize: '15px' }}
-              >
-                🚀 Process Batch File (250 Records Ticker)
-              </Button>
-            </div>
-          </div>
-        </>
+        </div>
       )}
 
       {/* ── MODE 2: LIVE STREAMING INGESTION PIPELINE & MODERN LOGS UI ── */}
@@ -547,7 +531,7 @@ export default function BulkClaimUpload({ onNavigate, onRoleSwitch }) {
                 {validCount}
               </div>
               <div style={{ fontSize: '11px', color: T.commitGreen, marginTop: '4px', fontWeight: 600 }}>
-                ✓ Passed Ingestion Gatekeeping
+                Passed Ingestion Gatekeeping
               </div>
             </div>
 
@@ -564,7 +548,7 @@ export default function BulkClaimUpload({ onNavigate, onRoleSwitch }) {
                 {exceptionCount}
               </div>
               <div style={{ fontSize: '11px', color: exceptionCount > 0 ? T.error : T.textMuted, marginTop: '4px', fontWeight: 600 }}>
-                {exceptionCount > 0 ? '! Moved to Exception Queue' : 'Zero exceptions'}
+                {exceptionCount > 0 ? 'Moved to Exception Queue' : 'Zero exceptions'}
               </div>
             </div>
 
@@ -610,7 +594,6 @@ export default function BulkClaimUpload({ onNavigate, onRoleSwitch }) {
               flexWrap: 'wrap',
             }}>
               
-              {/* Counter Title & Active Status */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 {isProcessing ? (
                   <Icons.Spinner color={T.stateBlue} size={18} />
@@ -632,9 +615,7 @@ export default function BulkClaimUpload({ onNavigate, onRoleSwitch }) {
                 </div>
               </div>
 
-              {/* Right Controls: Search + Filter Tabs + Speed / Pause */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                {/* Search Bar */}
                 <div style={{
                   display: 'flex', alignItems: 'center', gap: '6px',
                   background: '#ffffff', border: `1px solid ${T.borderDefault}`,
@@ -653,7 +634,6 @@ export default function BulkClaimUpload({ onNavigate, onRoleSwitch }) {
                   />
                 </div>
 
-                {/* Filter Pills */}
                 <div style={{ display: 'flex', background: '#e2e8f0', borderRadius: '6px', padding: '2px' }}>
                   {[
                     { id: 'all', label: `All (${processedCount})` },
@@ -677,7 +657,6 @@ export default function BulkClaimUpload({ onNavigate, onRoleSwitch }) {
                   ))}
                 </div>
 
-                {/* Ticker Controls */}
                 {isProcessing && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <button
@@ -711,7 +690,6 @@ export default function BulkClaimUpload({ onNavigate, onRoleSwitch }) {
               </div>
             </div>
 
-            {/* Table Column Headers (Matching Modern High-Readability Reference Layout) */}
             <div style={{
               display: 'grid',
               gridTemplateColumns: '40px 110px 1.4fr 1.3fr 0.9fr 1.8fr 130px 60px',
@@ -749,7 +727,6 @@ export default function BulkClaimUpload({ onNavigate, onRoleSwitch }) {
               </span>
             </div>
 
-            {/* Scrollable Rows Container */}
             <div
               ref={logContainerRef}
               style={{
@@ -791,7 +768,6 @@ export default function BulkClaimUpload({ onNavigate, onRoleSwitch }) {
                         animation: 'fadeIn 0.2s ease',
                       }}
                     >
-                      {/* Checkbox */}
                       <input
                         type="checkbox"
                         checked={isSelected}
@@ -799,7 +775,6 @@ export default function BulkClaimUpload({ onNavigate, onRoleSwitch }) {
                         style={{ cursor: 'pointer', accentColor: T.primaryNavy }}
                       />
 
-                      {/* Row & Timestamp */}
                       <div>
                         <div style={{ fontSize: '12px', fontWeight: 700, color: isCurrentActive ? T.stateBlue : T.primaryNavy }}>
                           #{String(row.row).padStart(3, '0')}
@@ -809,7 +784,6 @@ export default function BulkClaimUpload({ onNavigate, onRoleSwitch }) {
                         </div>
                       </div>
 
-                      {/* Subscriber Name & Claim ID */}
                       <div>
                         <div style={{ fontSize: '13px', fontWeight: 700, color: T.textPrimary }}>
                           {row.subscriber}
@@ -819,7 +793,6 @@ export default function BulkClaimUpload({ onNavigate, onRoleSwitch }) {
                         </div>
                       </div>
 
-                      {/* Policy ID & Status */}
                       <div>
                         <div style={{
                           fontSize: '12px', fontWeight: 600,
@@ -833,23 +806,20 @@ export default function BulkClaimUpload({ onNavigate, onRoleSwitch }) {
                         </div>
                       </div>
 
-                      {/* Amount */}
                       <div style={{ fontSize: '13px', fontWeight: 700, color: T.primaryNavy }}>
                         {row.amount}
                       </div>
 
-                      {/* Adjudication Notes */}
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <span style={{
                           fontSize: '12px',
                           color: isFailed ? T.error : T.textSecondary,
                           lineHeight: 1.35,
                         }}>
-                          {isFailed ? `⚠️ ${row.note}` : `✓ ${row.note}`}
+                          {row.note}
                         </span>
                       </div>
 
-                      {/* Paired Status Chip (Icon + Color) */}
                       <div>
                         {isCurrentActive ? (
                           <span style={{
@@ -881,7 +851,6 @@ export default function BulkClaimUpload({ onNavigate, onRoleSwitch }) {
                         )}
                       </div>
 
-                      {/* Inspect Action Eye Icon (Matching Reference Image Action Column) */}
                       <div style={{ textAlign: 'center' }}>
                         <button
                           onClick={() => setInspectModalRow(row)}
@@ -904,7 +873,6 @@ export default function BulkClaimUpload({ onNavigate, onRoleSwitch }) {
               )}
             </div>
 
-            {/* Table Footer */}
             <div style={{
               padding: '10px 20px', background: '#f8fafc', borderTop: `1px solid ${T.borderLight}`,
               display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', color: T.textMuted,
@@ -937,9 +905,9 @@ export default function BulkClaimUpload({ onNavigate, onRoleSwitch }) {
                   width: '44px', height: '44px', borderRadius: '50%',
                   background: T.commitGreen, color: '#fff',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '22px', flexShrink: 0,
+                  flexShrink: 0,
                 }}>
-                  ✓
+                  <Icons.CheckCircle color="#fff" size={24} />
                 </div>
                 <div>
                   <div style={{ fontWeight: 800, fontSize: '16px', color: T.primaryNavy, marginBottom: '2px' }}>
@@ -988,7 +956,7 @@ export default function BulkClaimUpload({ onNavigate, onRoleSwitch }) {
             }}>
               <div>
                 <div style={{ fontWeight: 700, fontSize: '14px', color: inspectModalRow.status === 'failed' ? T.error : T.commitGreen }}>
-                  {inspectModalRow.status === 'failed' ? `⚠️ Exception Flagged: ${inspectModalRow.error}` : '✓ Validation Passed'}
+                  {inspectModalRow.status === 'failed' ? `Exception Flagged: ${inspectModalRow.error}` : 'Validation Passed'}
                 </div>
                 <div style={{ fontSize: '12px', color: T.textMuted, marginTop: '2px' }}>
                   {inspectModalRow.note}
