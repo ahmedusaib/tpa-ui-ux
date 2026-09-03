@@ -3,6 +3,7 @@ import { T } from '../../tokens';
 import Button from '../../components/UI/Button';
 import Badge from '../../components/UI/Badge';
 import Modal from '../../components/UI/Modal';
+import KPICard from '../../components/UI/KPICard';
 
 const EXCEPTION_ROWS = [
   { row: 1,  policyId: 'AL-TPA-XXXX-???', subscriber: 'Muhammad Ali',   amount: 'PKR 12,000', error: 'Invalid Policy ID',     errorDetail: 'Policy number format is invalid' },
@@ -16,6 +17,27 @@ const EXCEPTION_ROWS = [
   { row: 28, policyId: 'AL-TPA-2023-88200', subscriber: 'Nadia Khan',    amount: 'PKR 42,500', error: 'Duplicate Claim',      errorDetail: 'Claim within 30-day waiting period' },
   { row: 30, policyId: 'AL-TPA-XXXX-???',  subscriber: 'Tariq Mehmood', amount: 'PKR 14,000', error: 'Invalid Policy ID',    errorDetail: 'Policy ID missing required TPA prefix' },
 ];
+
+const IcoBatch = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={T.textSecondary} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+  </svg>
+);
+const IcoValid = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={T.commitGreen} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+  </svg>
+);
+const IcoError = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={T.error} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+  </svg>
+);
+const IcoWrench = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={T.goldAccent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+  </svg>
+);
 
 export default function BulkExceptionWorkbench() {
   const [fixModal, setFixModal] = useState(null); // row index
@@ -37,7 +59,6 @@ export default function BulkExceptionWorkbench() {
   };
 
   const exceptionRow = EXCEPTION_ROWS.find(r => r.row === fixModal);
-  const pending = EXCEPTION_ROWS.filter(r => !resolved.includes(r.row));
 
   return (
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
@@ -51,37 +72,12 @@ export default function BulkExceptionWorkbench() {
         </p>
       </div>
 
-      {/* Summary KPI Cards — WorkQueue style */}
+      {/* ── KPI Cards matching reference ── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
-        {[
-          { label: 'Total Uploaded', value: 250,            trendText: 'batch total',   trendIcon: null,  trendColor: T.textMuted  },
-          { label: 'Valid Records',  value: 240,            trendText: 'ready',         trendIcon: '↑',   trendColor: T.commitGreen },
-          { label: 'Exceptions',    value: 10,             trendText: 'needs review',  trendIcon: '!',   trendColor: T.error      },
-          { label: 'Resolved',      value: resolved.length, trendText: 'fixed',        trendIcon: resolved.length > 0 ? '↑' : null, trendColor: T.goldAccent },
-        ].map(kpi => (
-          <div key={kpi.label} style={{
-            background: T.cardSurface, border: `1px solid ${T.borderLight}`,
-            borderRadius: '16px', padding: '20px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
-            display: 'flex', flexDirection: 'column', gap: '8px',
-          }}>
-            <div style={{ fontSize: '32px', fontWeight: 800, color: T.textPrimary, lineHeight: 1 }}>{kpi.value}</div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
-              {kpi.trendIcon ? (
-                <span style={{
-                  display: 'inline-flex', alignItems: 'center', gap: '2px',
-                  fontSize: '11px', fontWeight: 700, color: kpi.trendColor,
-                  background: `${kpi.trendColor}18`, padding: '4px 6px', borderRadius: '6px',
-                }}>
-                  {kpi.trendIcon} {kpi.trendText}
-                </span>
-              ) : (
-                <span style={{ fontSize: '12px', color: T.textMuted }}>{kpi.trendText}</span>
-              )}
-            </div>
-            <div style={{ fontSize: '13px', color: T.textSecondary, fontWeight: 500, marginTop: '2px' }}>{kpi.label}</div>
-          </div>
-        ))}
+        <KPICard icon={<IcoBatch />}  label="Total Uploaded" sublabel="Batch Total"  value={250}             trendText="batch total" trendUp={null} />
+        <KPICard icon={<IcoValid />}  label="Valid Records"  sublabel="Ready"        value={240}             trendText="ready"       trendUp={true} />
+        <KPICard icon={<IcoError />}  label="Exceptions"     sublabel="Needs Review" value={10}              trendText="needs review"trendUp={false} />
+        <KPICard icon={<IcoWrench />} label="Resolved"       sublabel="Fixed"        value={resolved.length} trendText="fixed"       trendUp={resolved.length > 0 ? true : null} />
       </div>
 
       {/* Progress Bar */}
