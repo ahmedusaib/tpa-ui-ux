@@ -1,12 +1,30 @@
 import React from 'react';
 import { T } from '../../tokens';
 
+const Icons = {
+  Rules: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={T.primaryNavy} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+    </svg>
+  ),
+  Policy: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={T.primaryNavy} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+    </svg>
+  ),
+  Finance: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={T.primaryNavy} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+    </svg>
+  ),
+};
+
 const crossModuleData = {
   team1: [
     { label: 'Benefit Cap (Hospitalization)', value: 'PKR 500,000 / year' },
     { label: 'Annual Balance Remaining', value: 'PKR 455,000' },
     { label: 'Device Protection Cap', value: 'PKR 80,000' },
-    { label: 'Waiting Period (Pre-existing)', value: '12 months — Elapsed ✓' },
+    { label: 'Waiting Period (Pre-existing)', value: '12 months — Elapsed' },
     { label: 'Co-pay / Deductible', value: '10% (Min PKR 2,000)' },
   ],
   team2: [
@@ -43,7 +61,7 @@ function DataRow({ label, value, highlight }) {
   );
 }
 
-function Section({ title, source, items }) {
+function Section({ title, Icon, source, items }) {
   return (
     <div style={{
       background: T.cardSurface,
@@ -58,7 +76,10 @@ function Section({ title, source, items }) {
         borderBottom: `1px solid ${T.borderLight}`,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
-        <span style={{ fontWeight: 700, fontSize: '12px', color: T.primaryNavy }}>{title}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Icon />
+          <span style={{ fontWeight: 700, fontSize: '12px', color: T.primaryNavy }}>{title}</span>
+        </div>
         <span style={{
           fontSize: '10px', fontWeight: 600, color: T.textMuted,
           background: '#e8edf2', padding: '2px 8px', borderRadius: '4px',
@@ -77,17 +98,20 @@ export default function CrossModulePanel() {
   return (
     <div>
       <Section
-        title="📦 Product Rules & Benefit Limits"
+        title="Product Rules & Benefit Limits"
+        Icon={Icons.Rules}
         source="Team 1"
         items={crossModuleData.team1}
       />
       <Section
-        title="📋 Policy Lifecycle & Coverage"
+        title="Policy Lifecycle & Coverage"
+        Icon={Icons.Policy}
         source="Team 2"
         items={crossModuleData.team2}
       />
       <Section
-        title="💳 Finance & Premium Status"
+        title="Finance & Premium Status"
+        Icon={Icons.Finance}
         source="Team 3"
         items={crossModuleData.team3}
       />

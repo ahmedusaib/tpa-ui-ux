@@ -5,6 +5,49 @@ import Badge from '../../components/UI/Badge';
 import CrossModulePanel from '../../components/shared/CrossModulePanel';
 import Modal from '../../components/UI/Modal';
 
+const Icons = {
+  File: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+    </svg>
+  ),
+  Robot: ({ color = "currentColor", size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+    </svg>
+  ),
+  Refresh: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+    </svg>
+  ),
+  Search: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={T.primaryNavy} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+  ),
+  Scales: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={T.primaryNavy} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1zM2 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1zM7 21h10M12 3v18M3 7h18"/>
+    </svg>
+  ),
+  Check: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+  ),
+  X: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+  ),
+  Send: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+    </svg>
+  ),
+};
+
 const EXTRACTED_FIELDS = [
   { key: 'hospitalName',   label: 'Hospital Name',         value: 'Aga Khan University Hospital', confidence: 98 },
   { key: 'patientName',    label: 'Patient Name',           value: 'Jawad Saleem', confidence: 99 },
@@ -132,9 +175,10 @@ export default function AssessmentWorkbench() {
             padding: '0 16px', borderBottom: '1px solid rgba(255,255,255,0.1)',
             flexShrink: 0,
           }}>
-            <span style={{ fontSize: '13px', fontWeight: 600, color: 'rgba(255,255,255,0.8)' }}>
-              📄 hospital_bill_AKU.pdf
-            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'rgba(255,255,255,0.8)', fontSize: '13px', fontWeight: 600 }}>
+              <Icons.File />
+              <span>hospital_bill_AKU.pdf</span>
+            </div>
             <div style={{ display: 'flex', gap: '8px' }}>
               {[
                 { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>, title: 'Zoom/Search' },
@@ -238,7 +282,10 @@ export default function AssessmentWorkbench() {
               loading={scanning}
               style={{ height: '44px', background: 'linear-gradient(135deg, #1b75bb, #0f4c7a)' }}
             >
-              {scanning ? '🤖 Scanning Document...' : scanDone ? '🔄 Re-run AI Extract' : '🤖 Run AI Extract & Adjudicate'}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                {scanning ? <Icons.Robot size={16} /> : scanDone ? <Icons.Refresh /> : <Icons.Robot size={16} />}
+                <span>{scanning ? 'Scanning Document...' : scanDone ? 'Re-run AI Extract' : 'Run AI Extract & Adjudicate'}</span>
+              </div>
             </Button>
           </div>
         </div>
@@ -257,7 +304,13 @@ export default function AssessmentWorkbench() {
               animation: 'fadeIn 0.4s ease',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ fontSize: '22px' }}>🤖</span>
+                <div style={{
+                  width: 34, height: 34, borderRadius: '8px',
+                  background: `${T.commitGreen}20`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <Icons.Robot color={T.commitGreen} size={20} />
+                </div>
                 <div>
                   <div style={{ fontWeight: 700, fontSize: '14px', color: T.commitGreen }}>
                     Low Risk — Auto-Approve Suggested
@@ -282,9 +335,12 @@ export default function AssessmentWorkbench() {
               borderBottom: `1px solid ${T.borderLight}`,
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             }}>
-              <span style={{ fontWeight: 700, fontSize: '13px', color: T.primaryNavy }}>
-                🔍 AI Extracted Fields
-              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Icons.Search />
+                <span style={{ fontWeight: 700, fontSize: '13px', color: T.primaryNavy }}>
+                  AI Extracted Fields
+                </span>
+              </div>
               {scanDone && (
                 <span style={{
                   fontSize: '11px', background: '#f0fdf4', color: T.commitGreen,
@@ -334,120 +390,133 @@ export default function AssessmentWorkbench() {
                 borderRadius: '12px', padding: '16px',
                 boxShadow: 'var(--shadow-card)',
               }}>
-            <h3 style={{ fontWeight: 700, fontSize: '14px', color: T.primaryNavy, marginBottom: '14px' }}>
-              ⚖️ Adjudication Controls
-            </h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-              {[
-                { label: 'Approved Payable Amount (PKR)', id: 'approved-amount', value: approvedAmount, setter: setApprovedAmount },
-                { label: 'Deductible Applied (PKR)', id: 'deductible', value: deductible, setter: setDeductible },
-              ].map(f => (
-                <div key={f.id}>
-                  <label htmlFor={f.id} style={{ fontSize: '12px', fontWeight: 600, color: T.textPrimary, display: 'block', marginBottom: '5px' }}>
-                    {f.label}
-                  </label>
-                  <input
-                    id={f.id}
-                    type="number"
-                    value={f.value}
-                    onChange={e => f.setter(e.target.value)}
-                    style={{
-                      width: '100%', height: '40px', padding: '0 12px',
-                      border: `1px solid ${T.borderDefault}`, borderRadius: '8px',
-                      fontFamily: 'var(--font-family)', fontSize: '14px', fontWeight: 700,
-                      color: T.primaryNavy, outline: 'none',
-                    }}
-                  />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
+                  <Icons.Scales />
+                  <h3 style={{ fontWeight: 700, fontSize: '14px', color: T.primaryNavy, margin: 0 }}>
+                    Adjudication Controls
+                  </h3>
                 </div>
-              ))}
-            </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-              <div>
-                <label style={{ fontSize: '12px', fontWeight: 600, color: T.textPrimary, display: 'block', marginBottom: '5px' }}>
-                  Reason Code
-                </label>
-                <select
-                  id="reason-code"
-                  value={reasonCode}
-                  onChange={e => setReasonCode(e.target.value)}
-                  style={{
-                    width: '100%', height: '40px', padding: '0 10px',
-                    border: `1px solid ${T.borderDefault}`, borderRadius: '8px',
-                    fontFamily: 'var(--font-family)', fontSize: '13px', fontWeight: 500,
-                    background: T.cardSurface, outline: 'none',
-                  }}
-                >
-                  <option value="">— Select Reason Code —</option>
-                  <option value="HOSP-STD">HOSP-STD: Standard Hospitalization</option>
-                  <option value="DEDUCT-10">DEDUCT-10: 10% Co-pay Applied</option>
-                  <option value="PREEX-EXCL">PREEX-EXCL: Pre-existing Exclusion</option>
-                  <option value="DUP-CLM">DUP-CLM: Duplicate Claim</option>
-                  <option value="INSUF-DOC">INSUF-DOC: Insufficient Documentation</option>
-                </select>
-              </div>
-              <div>
-                <label style={{ fontSize: '12px', fontWeight: 600, color: T.textPrimary, display: 'block', marginBottom: '5px' }}>
-                  Assessor Notes
-                </label>
-                <textarea
-                  id="assessor-notes"
-                  value={notes}
-                  onChange={e => setNotes(e.target.value)}
-                  placeholder="Add internal notes..."
-                  rows={1}
-                  style={{
-                    width: '100%', padding: '8px 12px',
-                    border: `1px solid ${T.borderDefault}`, borderRadius: '8px',
-                    fontFamily: 'var(--font-family)', fontSize: '13px', fontWeight: 500,
-                    resize: 'none', outline: 'none',
-                  }}
-                />
-              </div>
-            </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                  {[
+                    { label: 'Approved Payable Amount (PKR)', id: 'approved-amount', value: approvedAmount, setter: setApprovedAmount },
+                    { label: 'Deductible Applied (PKR)', id: 'deductible', value: deductible, setter: setDeductible },
+                  ].map(f => (
+                    <div key={f.id}>
+                      <label htmlFor={f.id} style={{ fontSize: '12px', fontWeight: 600, color: T.textPrimary, display: 'block', marginBottom: '5px' }}>
+                        {f.label}
+                      </label>
+                      <input
+                        id={f.id}
+                        type="number"
+                        value={f.value}
+                        onChange={e => f.setter(e.target.value)}
+                        style={{
+                          width: '100%', height: '40px', padding: '0 12px',
+                          border: `1px solid ${T.borderDefault}`, borderRadius: '8px',
+                          fontFamily: 'var(--font-family)', fontSize: '14px', fontWeight: 700,
+                          color: T.primaryNavy, outline: 'none',
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
 
-            {/* Decision Buttons */}
-            <div style={{ display: 'flex', gap: '10px', paddingTop: '12px', borderTop: `1px solid ${T.borderLight}` }}>
-              <Button
-                id="btn-approve"
-                variant="commit"
-                onClick={() => handleDecision('Approve')}
-                style={{ flex: 1 }}
-              >
-                ✅ Approve
-              </Button>
-              <Button
-                id="btn-reject"
-                variant="danger"
-                onClick={() => handleDecision('Reject')}
-                style={{ flex: 1 }}
-              >
-                ❌ Reject
-              </Button>
-              <Button
-                id="btn-refer"
-                variant="ghost"
-                onClick={() => handleDecision('Refer')}
-                style={{ flex: 1 }}
-              >
-                📤 Refer
-              </Button>
-            </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                  <div>
+                    <label style={{ fontSize: '12px', fontWeight: 600, color: T.textPrimary, display: 'block', marginBottom: '5px' }}>
+                      Reason Code
+                    </label>
+                    <select
+                      id="reason-code"
+                      value={reasonCode}
+                      onChange={e => setReasonCode(e.target.value)}
+                      style={{
+                        width: '100%', height: '40px', padding: '0 10px',
+                        border: `1px solid ${T.borderDefault}`, borderRadius: '8px',
+                        fontFamily: 'var(--font-family)', fontSize: '13px', fontWeight: 500,
+                        background: T.cardSurface, outline: 'none',
+                      }}
+                    >
+                      <option value="">— Select Reason Code —</option>
+                      <option value="HOSP-STD">HOSP-STD: Standard Hospitalization</option>
+                      <option value="DEDUCT-10">DEDUCT-10: 10% Co-pay Applied</option>
+                      <option value="PREEX-EXCL">PREEX-EXCL: Pre-existing Exclusion</option>
+                      <option value="DUP-CLM">DUP-CLM: Duplicate Claim</option>
+                      <option value="INSUF-DOC">INSUF-DOC: Insufficient Documentation</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '12px', fontWeight: 600, color: T.textPrimary, display: 'block', marginBottom: '5px' }}>
+                      Assessor Notes
+                    </label>
+                    <textarea
+                      id="assessor-notes"
+                      value={notes}
+                      onChange={e => setNotes(e.target.value)}
+                      placeholder="Add internal notes..."
+                      rows={1}
+                      style={{
+                        width: '100%', padding: '8px 12px',
+                        border: `1px solid ${T.borderDefault}`, borderRadius: '8px',
+                        fontFamily: 'var(--font-family)', fontSize: '13px', fontWeight: 500,
+                        resize: 'none', outline: 'none',
+                      }}
+                    />
+                  </div>
+                </div>
 
-            {decision && decision !== 'Approve' && (
-              <div style={{
-                marginTop: '12px', padding: '10px 14px',
-                background: decision === 'Reject' ? T.errorBg : '#eff6ff',
-                border: `1px solid ${decision === 'Reject' ? '#fecaca' : '#bfdbfe'}`,
-                borderRadius: '8px', fontSize: '13px',
-                color: decision === 'Reject' ? T.error : T.stateBlue,
-                fontWeight: 600, animation: 'fadeIn 0.25s ease',
-              }}>
-                {decision === 'Reject' ? '❌ Claim marked for Rejection — Maker-Checker approval required.' : '📤 Claim referred for senior review.'}
+                {/* Decision Buttons */}
+                <div style={{ display: 'flex', gap: '10px', paddingTop: '12px', borderTop: `1px solid ${T.borderLight}` }}>
+                  <Button
+                    id="btn-approve"
+                    variant="commit"
+                    onClick={() => handleDecision('Approve')}
+                    style={{ flex: 1 }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                      <Icons.Check />
+                      <span>Approve</span>
+                    </div>
+                  </Button>
+                  <Button
+                    id="btn-reject"
+                    variant="danger"
+                    onClick={() => handleDecision('Reject')}
+                    style={{ flex: 1 }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                      <Icons.X />
+                      <span>Reject</span>
+                    </div>
+                  </Button>
+                  <Button
+                    id="btn-refer"
+                    variant="ghost"
+                    onClick={() => handleDecision('Refer')}
+                    style={{ flex: 1 }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                      <Icons.Send />
+                      <span>Refer</span>
+                    </div>
+                  </Button>
+                </div>
+
+                {decision && decision !== 'Approve' && (
+                  <div style={{
+                    marginTop: '12px', padding: '10px 14px',
+                    background: decision === 'Reject' ? T.errorBg : '#eff6ff',
+                    border: `1px solid ${decision === 'Reject' ? '#fecaca' : '#bfdbfe'}`,
+                    borderRadius: '8px', fontSize: '13px',
+                    color: decision === 'Reject' ? T.error : T.stateBlue,
+                    fontWeight: 600, animation: 'fadeIn 0.25s ease',
+                  }}>
+                    {decision === 'Reject' ? 'Claim marked for Rejection — Maker-Checker approval required.' : 'Claim referred for senior review.'}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-          </>
+            </>
           )}
         </div>
       </div>
@@ -480,7 +549,10 @@ export default function AssessmentWorkbench() {
           <div style={{ display: 'flex', gap: '10px' }}>
             <Button variant="secondary" fullWidth onClick={() => setShowApproveModal(false)}>Cancel</Button>
             <Button variant="commit" fullWidth onClick={() => setShowApproveModal(false)}>
-              ✅ Confirm & Forward to Checker
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                <Icons.Check />
+                <span>Confirm & Forward to Checker</span>
+              </div>
             </Button>
           </div>
         </div>
