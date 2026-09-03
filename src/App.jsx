@@ -36,7 +36,10 @@ export default function App() {
     setAnimKey(k => k + 1);
   };
 
-  const handleNavigate = (newScreen) => {
+  const handleNavigate = (newScreen, targetRole) => {
+    if (targetRole && targetRole !== role) {
+      setRole(targetRole);
+    }
     setScreen(newScreen);
     setAnimKey(k => k + 1);
   };
@@ -46,7 +49,7 @@ export default function App() {
       switch (screen) {
         case 'single-claim': return <SingleClaimIntimation onNavigate={handleNavigate} />;
         case 'track-claims': return <TrackClaims           onNavigate={handleNavigate} />;
-        case 'bulk-upload':  return <BulkClaimUpload />;
+        case 'bulk-upload':  return <BulkClaimUpload onNavigate={handleNavigate} onRoleSwitch={handleRoleSwitch} />;
         default:             return <SingleClaimIntimation onNavigate={handleNavigate} />;
       }
     } else {
