@@ -541,7 +541,7 @@ export default function SingleClaimIntimation({ onNavigate }) {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '14px' }}>
                   <InputField
                     id="ipd-admission-date"
-                    label="Admission Date"
+                    label={coverageType === 'Cashless' ? 'Expected Admission Date' : 'Admission Date'}
                     type="date"
                     value={admissionDate}
                     onChange={setAdmissionDate}
@@ -549,7 +549,7 @@ export default function SingleClaimIntimation({ onNavigate }) {
                   />
                   <InputField
                     id="ipd-length-stay"
-                    label="Length of Stay (Days)"
+                    label={coverageType === 'Cashless' ? 'Expected Length of Stay (Days)' : 'Length of Stay (Days)'}
                     type="number"
                     value={lengthOfStay}
                     onChange={setLengthOfStay}
@@ -558,7 +558,7 @@ export default function SingleClaimIntimation({ onNavigate }) {
                   />
                   <InputField
                     id="ipd-room-type"
-                    label="Ward / Room Category"
+                    label={coverageType === 'Cashless' ? 'Expected Room Category' : 'Ward / Room Category'}
                     value={roomType}
                     onChange={setRoomType}
                     required
@@ -569,10 +569,10 @@ export default function SingleClaimIntimation({ onNavigate }) {
                 <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '14px' }}>
                   <InputField
                     id="ipd-diagnosis"
-                    label="Provisional / Final Diagnosis"
+                    label={coverageType === 'Cashless' ? 'Provisional Diagnosis' : 'Provisional / Final Diagnosis'}
                     value={diagnosis}
                     onChange={setDiagnosis}
-                    placeholder="e.g. Acute Appendicitis with Peritonitis"
+                    placeholder={coverageType === 'Cashless' ? 'e.g. Acute Appendicitis (to be confirmed)' : 'e.g. Acute Appendicitis with Peritonitis'}
                     required
                   />
                   <InputField
@@ -584,26 +584,6 @@ export default function SingleClaimIntimation({ onNavigate }) {
                   />
                 </div>
 
-                <div style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  padding: '12px 14px', background: isMlc ? T.errorBg : T.pageCanvas,
-                  border: `1px solid ${isMlc ? '#fecaca' : T.borderLight}`, borderRadius: '8px',
-                }}>
-                  <div>
-                    <div style={{ fontSize: '13px', fontWeight: 700, color: isMlc ? T.error : T.textPrimary }}>
-                      Is this a Medico-Legal Case (MLC) / Emergency Trauma?
-                    </div>
-                    <div style={{ fontSize: '11px', color: T.textMuted }}>
-                      If checked, police FIR / MLC copy will be required in Step 3 Documents.
-                    </div>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={isMlc}
-                    onChange={e => setIsMlc(e.target.checked)}
-                    style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: T.error }}
-                  />
-                </div>
 
                 <div style={{
                   background: '#f8fafc', border: `1px solid ${T.borderLight}`,
@@ -611,12 +591,12 @@ export default function SingleClaimIntimation({ onNavigate }) {
                 }}>
                   <div style={{ fontSize: '13px', fontWeight: 700, color: T.primaryNavy, marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <Icons.Banknote color={T.primaryNavy} size={16} />
-                    <span>Estimated IPD Cost Breakdown (PKR)</span>
+                    <span>{coverageType === 'Cashless' ? 'Expected Cost Breakdown for Pre-Authorization (PKR)' : 'Actual IPD Cost Breakdown (PKR)'}</span>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
                     <InputField
                       id="cost-room"
-                      label="Room Rent / Charges"
+                      label={coverageType === 'Cashless' ? 'Expected Room Rent / Charges' : 'Room Rent / Charges'}
                       type="number"
                       value={roomRent}
                       onChange={setRoomRent}
@@ -624,7 +604,7 @@ export default function SingleClaimIntimation({ onNavigate }) {
                     />
                     <InputField
                       id="cost-icu"
-                      label="ICU / CCU Charges"
+                      label={coverageType === 'Cashless' ? 'Expected ICU / CCU Charges' : 'ICU / CCU Charges'}
                       type="number"
                       value={icuFees}
                       onChange={setIcuFees}
@@ -632,7 +612,7 @@ export default function SingleClaimIntimation({ onNavigate }) {
                     />
                     <InputField
                       id="cost-surgeon"
-                      label="Surgeon & OT Charges"
+                      label={coverageType === 'Cashless' ? 'Expected Surgeon & OT Charges' : 'Surgeon & OT Charges'}
                       type="number"
                       value={surgeonCharges}
                       onChange={setSurgeonCharges}
@@ -640,7 +620,7 @@ export default function SingleClaimIntimation({ onNavigate }) {
                     />
                     <InputField
                       id="cost-pharmacy"
-                      label="Pharmacy & Consumables"
+                      label={coverageType === 'Cashless' ? 'Expected Pharmacy & Consumables' : 'Pharmacy & Consumables'}
                       type="number"
                       value={pharmacyCost}
                       onChange={setPharmacyCost}
@@ -650,11 +630,11 @@ export default function SingleClaimIntimation({ onNavigate }) {
 
                   <InputField
                     id="total-claim-amount"
-                    label="Total Claim / Estimated Amount (PKR)"
+                    label={coverageType === 'Cashless' ? 'Total Expected Authorization Amount (PKR)' : 'Total Claim Amount (PKR)'}
                     type="number"
                     value={claimAmount}
                     onChange={setClaimAmount}
-                    placeholder="Total claim amount"
+                    placeholder={coverageType === 'Cashless' ? 'Total amount to be authorized' : 'Total claim amount'}
                     required
                   />
                 </div>
