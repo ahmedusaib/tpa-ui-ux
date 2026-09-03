@@ -60,17 +60,17 @@ const Icons = {
 };
 
 const USER_NAV = [
-  { id: 'single-claim', label: 'Single Claim Intimation', Icon: Icons.ClaimForm },
-  { id: 'track-claims', label: 'Track Claims',            Icon: Icons.Track },
-  { id: 'bulk-upload',  label: 'Bulk Claim Upload',       Icon: Icons.BulkUpload },
+  { id: 'single-claim',   label: 'Single Claim Intimation',    Icon: Icons.ClaimForm },
+  { id: 'track-claims',   label: 'Track Claims',               Icon: Icons.Track },
+  { id: 'bulk-upload',    label: 'Bulk Claim Upload',          Icon: Icons.BulkUpload },
+  { id: 'bulk-exception', label: 'Bulk Exception Workbench',   Icon: Icons.BulkException },
 ];
 
 const ADMIN_NAV = [
-  { id: 'work-queue',     label: 'Claims Work Queue',          Icon: Icons.Queue },
-  { id: 'assessment',     label: 'Assessment & AI Extraction', Icon: Icons.Assessment },
-  { id: 'decision',       label: 'Decision & Approval',        Icon: Icons.Decision },
-  { id: 'bulk-exception', label: 'Bulk Exception Workbench',   Icon: Icons.BulkException },
-  { id: 'audit-history',  label: 'Claims Audit & History',     Icon: Icons.Audit },
+  { id: 'work-queue',    label: 'Claims Work Queue',          Icon: Icons.Queue },
+  { id: 'assessment',   label: 'Assessment & AI Extraction', Icon: Icons.Assessment },
+  { id: 'decision',     label: 'Decision & Approval',        Icon: Icons.Decision },
+  { id: 'audit-history',label: 'Claims Audit & History',     Icon: Icons.Audit },
 ];
 
 export default function Sidebar({ role, activeScreen, onNavigate }) {

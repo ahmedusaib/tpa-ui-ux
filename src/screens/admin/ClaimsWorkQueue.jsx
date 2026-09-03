@@ -357,11 +357,11 @@ export default function ClaimsWorkQueue({ onNavigate }) {
 
       {/* ── KPI Cards (work-requiring-attention, not approved/rejected totals) ── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '14px', marginBottom: '28px' }}>
-        <KPICard icon={<IcoQueue />}      label="Claims Requiring Action"   value={counts.requiringAction} />
-        <KPICard icon={<IcoPreAuth />}    label="Pending Pre-Authorization" value={counts.preAuth} />
-        <KPICard icon={<IcoAssessment />} label="Pending Assessment"       value={counts.pendingAssessment} />
-        <KPICard icon={<IcoAction />}     label="Action Required"          value={counts.actionRequired} />
-        <KPICard icon={<IcoChecker />}    label="Awaiting Checker"         value={counts.awaitingChecker} />
+        <KPICard icon={<IcoQueue />}      label="Claims Requiring Action"   sublabel="Total Active" value={counts.requiringAction} trendText="+5% today" trendUp={true} />
+        <KPICard icon={<IcoPreAuth />}    label="Pending Pre-Authorization" sublabel="Priority"     value={counts.preAuth}         trendText="urgent"    trendUp={true} />
+        <KPICard icon={<IcoAssessment />} label="Pending Assessment"        sublabel="In Queue"     value={counts.pendingAssessment} trendText="active"   trendUp={null} />
+        <KPICard icon={<IcoAction />}     label="Action Required"           sublabel="Exceptions"   value={counts.actionRequired}  trendText="needs fix" trendUp={false} />
+        <KPICard icon={<IcoChecker />}    label="Awaiting Checker"          sublabel="Approval"     value={counts.awaitingChecker} trendText="ready"     trendUp={true} />
       </div>
 
       {/* ── Table Section ── */}

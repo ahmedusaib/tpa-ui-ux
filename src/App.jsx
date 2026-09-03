@@ -14,8 +14,10 @@ import BulkClaimUpload       from './screens/user/BulkClaimUpload';
 import ClaimsWorkQueue          from './screens/admin/ClaimsWorkQueue';
 import AssessmentWorkbench      from './screens/admin/AssessmentWorkbench';
 import DecisionApproval         from './screens/admin/DecisionApproval';
-import BulkExceptionWorkbench   from './screens/admin/BulkExceptionWorkbench';
 import ClaimsAuditHistory       from './screens/admin/ClaimsAuditHistory';
+
+// User Screens (moved from admin)
+import BulkExceptionWorkbench   from './screens/user/BulkExceptionWorkbench';
 
 const DEFAULT_SCREEN = {
   user:  'single-claim',
@@ -47,19 +49,19 @@ export default function App() {
   const renderScreen = () => {
     if (role === 'user') {
       switch (screen) {
-        case 'single-claim': return <SingleClaimIntimation onNavigate={handleNavigate} />;
-        case 'track-claims': return <TrackClaims           onNavigate={handleNavigate} />;
-        case 'bulk-upload':  return <BulkClaimUpload onNavigate={handleNavigate} onRoleSwitch={handleRoleSwitch} />;
-        default:             return <SingleClaimIntimation onNavigate={handleNavigate} />;
+        case 'single-claim':    return <SingleClaimIntimation onNavigate={handleNavigate} />;
+        case 'track-claims':    return <TrackClaims           onNavigate={handleNavigate} />;
+        case 'bulk-upload':     return <BulkClaimUpload onNavigate={handleNavigate} onRoleSwitch={handleRoleSwitch} />;
+        case 'bulk-exception':  return <BulkExceptionWorkbench />;
+        default:                return <SingleClaimIntimation onNavigate={handleNavigate} />;
       }
     } else {
       switch (screen) {
-        case 'work-queue':      return <ClaimsWorkQueue         onNavigate={handleNavigate} />;
-        case 'assessment':      return <AssessmentWorkbench />;
-        case 'decision':        return <DecisionApproval />;
-        case 'bulk-exception':  return <BulkExceptionWorkbench />;
-        case 'audit-history':   return <ClaimsAuditHistory />;
-        default:                return <ClaimsWorkQueue         onNavigate={handleNavigate} />;
+        case 'work-queue':    return <ClaimsWorkQueue   onNavigate={handleNavigate} />;
+        case 'assessment':   return <AssessmentWorkbench />;
+        case 'decision':     return <DecisionApproval />;
+        case 'audit-history':return <ClaimsAuditHistory />;
+        default:             return <ClaimsWorkQueue   onNavigate={handleNavigate} />;
       }
     }
   };
